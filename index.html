@@ -1379,42 +1379,49 @@ var HIGHLIGHTS = [
   }
 
   // שיתוף וואטסאפ — מסלול מפורט
+  // תקציר יום לעמודת ה״מה עושים״ בטבלה (הפעילויות העיקריות, מופרדות בנקודה)
+  function daySummary(day) {
+    var mains = day.rows.filter(function (r) { return r.tag === 'morning' || r.tag === 'noon' || r.tag === 'eve'; });
+    if (!mains.length) mains = day.rows.slice();
+    var names = mains.map(function (r) { return r.t; });
+    return names.join(' · ') || day.title;
+  }
+  // ריפוד/חיתוך מחרוזת לרוחב קבוע (לפי מספר תווים — מתאים ל-monospace של וואטסאפ)
+  function padEnd(s, w) { s = String(s); if (s.length > w) s = s.slice(0, w - 1) + '…'; while (s.length < w) s += ' '; return s; }
+  function padStart(s, w) { s = String(s); if (s.length > w) s = s.slice(0, w); while (s.length < w) s = ' ' + s; return s; }
+
   function tripText() {
     var whenTxt = whenLabel();
-    var SLOT = { morning: '🌅 בוקר', noon: '☀️ צהריים', eve: '🌙 ערב', move: '🚐 מעבר', stay: '🏨 לינה' };
-    var SLOT_ORDER = ['move', 'stay', 'morning', 'noon', 'eve'];
     var dests = S.dests.map(function (k) { return DEST[k] ? DEST[k].t : ''; }).filter(Boolean).join(' · ');
+    // רוחבי עמודות (בתווים) — מותאם לרוחב מסך טלפון ב-monospace
+    var W_DAY = 4, W_SUM = 20, W_COST = 6;
+    function row(a, b, c) { return '│' + padStart(a, W_DAY) + '│' + padEnd(b, W_SUM) + '│' + padStart(c, W_COST) + '│'; }
+    var line = function (l, m, r) { return l + rep('─', W_DAY) + m + rep('─', W_SUM) + m + rep('─', W_COST) + r; };
+    function rep(ch, n) { var s = ''; while (s.length < n) s += ch; return s; }
+
     var L = [];
+    // כותרת מחוץ ל-monospace (כדי שתהיה גדולה ומודגשת)
     L.push('🇧🇷 *המסלול שלי לברזיל*');
     L.push('_תוכנן עם טסים לחו״ל_');
-    L.push('');
-    L.push('🗓️ *' + S.days + '* ימים  │  👥 *' + S.pax + '* מטיילים' + (whenTxt ? '  │  🌤️ ' + whenTxt : ''));
+    L.push('🗓️ ' + S.days + ' ימים · 👥 ' + S.pax + ' מטיילים' + (whenTxt ? ' · 🌤️ ' + whenTxt : ''));
     L.push('📍 ' + dests);
     L.push('');
-    L.push('━━━━━━━━━━━━━━━');
+    // הטבלה עצמה — בתוך בלוק monospace כדי שהתווים יתיישרו
+    var T = [];
+    T.push(line('┌', '┬', '┐'));
+    T.push(row('יום', 'מה עושים', 'תקציב'));
+    T.push(line('├', '┼', '┤'));
     var grand = 0;
     S.plan.days.forEach(function (day, di) {
       var dc = dayCost(day); grand += dc;
-      L.push('');
-      L.push('*יום ' + (di + 1) + ' · ' + day.title + '*');
-      L.push('📌 ' + day.destName + '   💵 $' + dc.toLocaleString('en-US'));
-      // מקבצים לפי חלק ביום, לפי סדר הגיוני
-      SLOT_ORDER.forEach(function (sk) {
-        var items = day.rows.filter(function (r) { return r.tag === sk; });
-        if (!items.length) return;
-        items.forEach(function (r, idx) {
-          var head = (idx === 0 && SLOT[sk]) ? (SLOT[sk] + ':  ') : '       ';
-          L.push(head + '*' + r.t + '*' + (+r.cost > 0 ? '  ($' + (r.cost * S.pax).toLocaleString('en-US') + ')' : ''));
-          if (r.note) L.push('          _' + r.note + '_');
-        });
-      });
-      var hotel = hotelPerNight(day.destKey);
-      if (hotel) L.push('🏨 לינה ב' + day.destName + ' · $' + (hotel * S.pax) + ' ללילה');
-      L.push('┄┄┄┄┄┄┄┄┄┄┄');
+      T.push(row((di + 1) + '', daySummary(day), '$' + dc));
     });
+    T.push(line('├', '┼', '┤'));
+    T.push(row('סה״כ', S.days + ' ימים·' + S.pax + ' אנשים', '$' + grand));
+    T.push(line('└', '┴', '┘'));
+    L.push('```' + T.join('\n') + '```');
     L.push('');
-    L.push('💰 *סה״כ משוער: $' + grand.toLocaleString('en-US') + '*');
-    L.push('_(' + S.days + ' ימים · ' + S.pax + ' מטיילים, כולל לינה ופעילויות)_');
+    L.push('💰 *סה״כ משוער: $' + grand.toLocaleString('en-US') + '* _(כולל לינה ופעילויות)_');
     L.push('');
     L.push('✨ בנו גם אתם מסלול משלכם:');
     L.push('🔗 https://tasim-lehul.com/brazil');
