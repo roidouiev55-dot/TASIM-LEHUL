@@ -848,9 +848,9 @@ var HIGHLIGHTS = [
   function save() { try { localStorage.setItem(STORE, JSON.stringify(S)); } catch (e) {} }
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
 
-  // ====== מנוע תמונות: תמונה אמיתית לכל מקום דרך Wikipedia REST ======
-  // כל אריח נושא data-wp (שם הכתבה בוויקיפדיה) ו-data-fb (גיבוי יציב ליעד).
-  // שולפים את תמונת הכתבה הראשית (thumbnail) מ-REST summary; אם נכשל — גיבוי היעד.
+  // ====== מנוע תמונות: תמונה ייחודית לכל מקום, בלי חזרות ======
+  // כל אריח נושא data-wp (כתבת ויקיפדיה) ו-data-fb (גיבוי יציב). שולפים את גלריית
+  // התמונות של הכתבה (media-list), ומקצים לכל אריח תמונה שעוד לא נוצלה — כך אין חזרות.
   function FPATH(n) { return 'https://commons.wikimedia.org/wiki/Special:FilePath/' + encodeURIComponent(n) + '?width=640'; }
   var WPMAP = {
     'beaches': 'en:Copacabana,_Rio_de_Janeiro',
@@ -874,16 +874,16 @@ var HIGHLIGHTS = [
     'h-arpoador': 'en:Arpoador',
     'h-maracana': 'en:Maracanã_Stadium',
     'h-amanha': 'en:Museum_of_Tomorrow',
-    'h-tijuca': 'en:Tijuca_Forest',
+    'h-tijuca': 'en:Tijuca_National_Park',
     'h-aqua': 'en:AquaRio',
     'h-favela': 'en:Rocinha',
-    'h-hangglide': 'en:Pedra_Bonita',
+    'h-hangglide': 'en:Pedra_Bonita_(Rio_de_Janeiro)',
     'h-boat': 'en:Guanabara_Bay',
     'h-feijoada': 'en:Feijoada',
     'h-churrasco-rio': 'en:Churrasco',
     'h-acai': 'en:Açaí_na_tigela',
     'h-copacabana-palace': 'en:Copacabana_Palace',
-    'h-circo': 'en:Lapa,_Rio_de_Janeiro',
+    'h-circo': 'en:Circo_Voador',
     'h-vivorio': 'en:Marina_da_Glória',
     'h-scenarium': 'en:Lapa,_Rio_de_Janeiro',
     'h-lapa': 'en:Carioca_Aqueduct',
@@ -891,7 +891,7 @@ var HIGHLIGHTS = [
     'h-garganta': 'en:Iguazu_Falls',
     'h-aves': 'en:Toco_toucan',
     'h-itaipu': 'en:Itaipu_Dam',
-    'h-macuco': 'en:Iguazu_Falls',
+    'h-macuco': 'en:Iguazu_River',
     'h-helicopter': 'en:Iguazu_Falls',
     'h-pelourinho': 'en:Pelourinho_(Salvador)',
     'h-bonfim': 'en:Church_of_Senhor_do_Bonfim',
@@ -899,7 +899,7 @@ var HIGHLIGHTS = [
     'h-farol': 'en:Farol_da_Barra',
     'h-mercado': 'en:Mercado_Modelo_(Salvador)',
     'h-capoeira': 'en:Capoeira',
-    'h-cooking': 'en:Moqueca',
+    'h-cooking': 'en:Bahian_cuisine',
     'h-itaparica': 'en:Itaparica_Island',
     'h-moqueca': 'en:Moqueca',
     'h-acaraje': 'en:Acarajé',
@@ -909,7 +909,7 @@ var HIGHLIGHTS = [
     'h-jaguar': 'en:Jaguar',
     'h-nightsafari': 'en:Pantanal',
     'h-piranha': 'en:Red-bellied_piranha',
-    'h-horse-pantanal': 'en:Pantanal',
+    'h-horse-pantanal': 'en:Pantanal_horse',
     'h-birding': 'en:Hyacinth_macaw',
     'h-duna': 'en:Jericoacoara',
     'h-pedra': 'en:Jericoacoara_National_Park',
@@ -920,7 +920,7 @@ var HIGHLIGHTS = [
     'h-forro-jeri': 'en:Forró',
     'h-masp': 'en:São_Paulo_Museum_of_Art',
     'h-ibira': 'en:Ibirapuera_Park',
-    'h-batman': 'en:Vila_Madalena',
+    'h-batman': 'en:Beco_do_Batman',
     'h-liberdade': 'en:Liberdade_(district_of_São_Paulo)',
     'h-mercadao': 'en:Mercado_Municipal_(São_Paulo)',
     'h-sampa-dining': 'en:Jardins_(district_of_São_Paulo)',
@@ -928,7 +928,7 @@ var HIGHLIGHTS = [
     'h-allianz': 'en:Allianz_Parque',
     'h-lagoa-floripa': 'en:Lagoa_da_Conceição',
     'h-joaquina': 'en:Joaquina_Beach',
-    'h-lagoinha': 'en:Florianópolis',
+    'h-lagoinha': 'en:Santa_Catarina_Island',
     'h-sandboard': 'en:Joaquina_Beach',
     'h-oyster': 'en:Oyster',
     'h-jurere': 'en:Jurerê',
@@ -936,14 +936,13 @@ var HIGHLIGHTS = [
     'h-ferradura': 'en:Búzios',
     'h-geriba': 'en:Búzios',
     'h-ossos': 'en:Búzios',
-    'h-schooner': 'en:Búzios',
-    'h-fumaca': 'en:Chapada_Diamantina_National_Park',
+    'h-schooner': 'en:Armação_dos_Búzios',
+    'h-fumaca': 'en:Cachoeira_da_Fumaça',
     'h-painacio': 'en:Chapada_Diamantina',
-    'h-pocoazul': 'en:Chapada_Diamantina',
+    'h-pocoazul': 'en:Chapada_Diamantina_National_Park',
     'h-pati': 'en:Chapada_Diamantina_National_Park',
     'h-poamarelo': 'en:Chapada_Diamantina'
   };
-  // גיבוי לפי יעד/קטגוריה — נקודות ציון מפורסמות, קבצים יציבים
   var FB = {
     rio: FPATH('Christ on Corcovado mountain.JPG'),
     iguacu: FPATH('Iguazu Falls.jpg'),
@@ -962,33 +961,68 @@ var HIGHLIGHTS = [
     icon: FPATH('Christ on Corcovado mountain.JPG')
   };
   function fbFor(key) { return FB[key] || FB.rio; }
-  // שם הכתבה לאריח לפי id; מחזיר 'lang:Title' או ריק
   function wpFor(id) { return WPMAP[id] || ''; }
-  // שליפת תמונת הכתבה הראשית מ-Wikipedia REST (thumbnail גדול)
-  var _wpCache = {};
-  function fetchWpImage(spec, cb) {
-    if (!spec) { cb(null); return; }
-    if (_wpCache[spec] !== undefined) { cb(_wpCache[spec]); return; }
+
+  // רישום תמונות שכבר נוצלו — אוסר חזרות בכל הדף
+  var _usedImages = {};
+  function _canon(url) {
+    // מנרמל URL של Wikimedia לשם הקובץ הבסיסי, כדי לזהות אותה תמונה גם בגדלים שונים
+    try {
+      var m = url.match(/\/([^\/?#]+\.(?:jpe?g|png|webp|gif))/i);
+      var name = m ? decodeURIComponent(m[1]) : url;
+      // מסירים תחילית thumb ו-/NNNpx-
+      name = name.replace(/^\d+px-/, '');
+      return name.toLowerCase();
+    } catch (e) { return url; }
+  }
+  function _isBad(name) {
+    var l = name.toLowerCase();
+    var bad = ['map', 'mapa', 'flag', 'bandeira', 'logo', 'coat_of_arms', 'brasao', 'emblem',
+      'locator', 'location', 'icon', 'chart', 'diagram', 'seal', 'svg', 'plan', 'planta',
+      'wikidata', 'commons-logo', 'edit-', 'ooui', 'red_pog', 'green_pog', 'blue_pog',
+      'gnome', 'crystal', 'nuvola', 'disambig', 'question_book', 'ambox', 'portrait'];
+    for (var i = 0; i < bad.length; i++) { if (l.indexOf(bad[i]) !== -1) return true; }
+    if (/\.svg$/i.test(l)) return true;
+    return false;
+  }
+
+  // מטמון גלריות לפי כתבה
+  var _galCache = {};
+  function fetchGallery(spec, cb) {
+    if (!spec) { cb([]); return; }
+    if (_galCache[spec] !== undefined) { cb(_galCache[spec]); return; }
     var parts = spec.split(':'); var lang = parts.length > 1 ? parts[0] : 'en';
     var title = parts.length > 1 ? parts.slice(1).join(':') : parts[0];
-    var url = 'https://' + lang + '.wikipedia.org/api/rest_v1/page/summary/' + encodeURIComponent(title) + '?redirect=true';
+    var base = 'https://' + lang + '.wikipedia.org/api/rest_v1/page/media-list/' + encodeURIComponent(title) + '?redirect=true';
     var done = false;
-    var timer = setTimeout(function () { if (!done) { done = true; _wpCache[spec] = null; cb(null); } }, 7000);
-    fetch(url, { headers: { 'Accept': 'application/json' } })
+    var timer = setTimeout(function () { if (!done) { done = true; _galCache[spec] = []; cb([]); } }, 8000);
+    fetch(base, { headers: { 'Accept': 'application/json' } })
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (d) {
         if (done) return; done = true; clearTimeout(timer);
-        var img = null;
-        if (d) {
-          if (d.originalimage && d.originalimage.source) img = d.originalimage.source;
-          else if (d.thumbnail && d.thumbnail.source) img = d.thumbnail.source;
-          // מעדיפים רוחב ~640: thumbnail מגיע בברירת מחדל ~320, originalimage מלא. נבקש גודל בינוני דרך FilePath אם יש שם קובץ
+        var urls = [];
+        if (d && d.items) {
+          for (var i = 0; i < d.items.length; i++) {
+            var it = d.items[i];
+            if (it.type !== 'image') continue;
+            // שם הקובץ: it.title כמו 'File:Xxx.jpg'
+            var t = (it.title || '').replace(/^File:/i, '');
+            if (!t || _isBad(t)) continue;
+            // מעדיפים גרסאות רחבות אם יש srcset; אחרת בונים FilePath 640
+            var src = null;
+            if (it.srcset && it.srcset.length) {
+              src = it.srcset[it.srcset.length - 1].src;
+              if (src && src.indexOf('//') === 0) src = 'https:' + src;
+            }
+            if (!src) src = FPATH(t);
+            urls.push({ src: src, name: t });
+          }
         }
-        _wpCache[spec] = img; cb(img);
+        _galCache[spec] = urls; cb(urls);
       })
-      .catch(function () { if (done) return; done = true; clearTimeout(timer); _wpCache[spec] = null; cb(null); });
+      .catch(function () { if (done) return; done = true; clearTimeout(timer); _galCache[spec] = []; cb([]); });
   }
-  // טעינה: גיבוי מיד (לא נשאר ריק), ואז שדרוג לתמונת הכתבה האמיתית. lazy עם IntersectionObserver.
+
   var _imgObserver = null;
   function loadGalleryImages(root) {
     root = root || document;
@@ -998,12 +1032,25 @@ var HIGHLIGHTS = [
       bg.setAttribute('data-loaded', '1');
       var spec = bg.getAttribute('data-wp');
       var fb = bg.getAttribute('data-fb');
-      if (fb) paint(bg, fb);                 // גיבוי מיידי — אף אריח לא ריק
-      fetchWpImage(spec, function (img) {    // שדרוג לתמונה האמיתית אם הושגה
-        if (!img) return;
-        var probe = new Image();
-        probe.onload = function () { paint(bg, img); };
-        probe.src = img;                     // onerror? משאירים את הגיבוי
+      // גיבוי מיידי רק אם התמונה הזו עוד לא בשימוש — ומסמנים אותה כתפוסה כדי שלא תחזור
+      var fbKey = fb ? _canon(fb) : '';
+      var fbClaimed = false;
+      if (fb && !_usedImages[fbKey]) { _usedImages[fbKey] = 1; fbClaimed = true; paint(bg, fb); }
+      fetchGallery(spec, function (urls) {
+        // בוחרים את התמונה הראשונה בגלריה שעוד לא נוצלה בדף
+        for (var i = 0; i < urls.length; i++) {
+          var key = _canon(urls[i].name);
+          if (_usedImages[key]) continue;
+          _usedImages[key] = 1;
+          if (fbClaimed) { delete _usedImages[fbKey]; }  // משחררים את הגיבוי — הוחלף בתמונה ייחודית
+          var chosen = urls[i].src;
+          var probe = new Image();
+          (function (c) { probe.onload = function () { paint(bg, c); }; })(chosen);
+          probe.src = chosen;
+          return;
+        }
+        // כל הגלריה נוצלה/ריקה: אם לא תפסנו גיבוי קודם ויש גיבוי פנוי — ננעל אותו; אחרת נשאיר גרדיאנט
+        if (!fbClaimed && fb && !_usedImages[fbKey]) { _usedImages[fbKey] = 1; paint(bg, fb); }
       });
     }
     if ('IntersectionObserver' in window) {
