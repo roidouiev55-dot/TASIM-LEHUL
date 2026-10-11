@@ -179,22 +179,45 @@
   .tp-tool { display: inline-flex; align-items: center; gap: 8px; background: #fff; border: 1.5px solid var(--line); color: var(--ink-soft); font-weight: 700; font-size: 0.86rem; padding: 9px 15px; border-radius: 99px; cursor: pointer; transition: all .15s; }
   .tp-tool:hover { border-color: var(--gold); }
   .tp-tool.gold { background: rgba(245,197,24,0.14); border-color: rgba(245,197,24,0.45); color: var(--gold-deep); }
-  .tp-plan-tools { justify-content: space-between; }
-  .tp-viewtoggle { display: inline-flex; background: #f3f3ef; border: 1px solid var(--line); border-radius: 11px; padding: 4px; gap: 4px; }
-  .tp-viewtoggle button { border: 0; background: none; font-family: inherit; font-weight: 800; font-size: 0.85rem; color: var(--ink-soft); padding: 8px 15px; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; }
-  .tp-viewtoggle button.on { background: var(--graphite); color: #fff; }
-  /* טבלת מסלול — ימים כשורות (אופציה 2) */
-  .tp-tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 14px; background: var(--paper); margin-bottom: 8px; }
-  .tp-table { width: 100%; min-width: 620px; border-collapse: collapse; font-size: 0.85rem; }
-  .tp-table th, .tp-table td { border: 1px solid var(--line); padding: 10px 12px; text-align: right; vertical-align: top; }
-  .tp-table thead th { background: var(--graphite); color: #fff; font-weight: 800; text-align: center; position: sticky; top: 0; }
-  .tp-table tbody th { background: #f3f3ef; color: var(--ink); font-weight: 800; white-space: nowrap; width: 58px; text-align: center; }
-  .tp-table tbody th small { display: block; font-size: 0.68rem; color: var(--ink-mute); font-weight: 600; margin-top: 2px; }
-  .tp-table td .slot { margin-bottom: 7px; } .tp-table td .slot:last-child { margin-bottom: 0; }
-  .tp-table td .slot b { color: var(--ink); font-weight: 700; } .tp-table td .slot small { color: var(--ink-mute); display: block; font-size: 0.72rem; }
-  .tp-table .cost-col { color: var(--gold-deep); font-weight: 800; white-space: nowrap; text-align: center; }
-  .tp-table tr.total-row th, .tp-table tr.total-row td { background: var(--graphite); color: #fff; font-weight: 800; }
-  .tp-table tr.total-row .cost-col { color: var(--gold); font-size: 1rem; }
+  .tp-plan-tools { justify-content: flex-end; }
+  /* ===== טבלת מסלול — ימים כשורות ===== */
+  .tp-tablewrap { border: 1px solid var(--line); border-radius: 16px; background: var(--paper); margin-bottom: 8px; overflow: hidden; }
+  .tp-table { width: 100%; border-collapse: collapse; font-size: 0.86rem; table-layout: fixed; }
+  .tp-table col.c-day { width: 12%; } .tp-table col.c-slot { width: 26.33%; } .tp-table col.c-cost { width: 9%; }
+  .tp-table th, .tp-table td { border-bottom: 1px solid var(--line); border-inline-start: 1px solid var(--line); padding: 11px 13px; text-align: right; vertical-align: top; }
+  .tp-table th:first-child, .tp-table td:first-child { border-inline-start: 0; }
+  .tp-table tbody tr:last-child th, .tp-table tbody tr:last-child td { border-bottom: 0; }
+  .tp-table thead th { background: var(--graphite); color: #fff; font-weight: 800; text-align: center; font-size: 0.8rem; letter-spacing: .02em; padding: 10px 8px; }
+  .tp-table tbody th { background: #f5f5f1; color: var(--ink); font-weight: 800; text-align: center; }
+  .tp-table tbody th .d-num { display: block; font-size: 0.92rem; }
+  .tp-table tbody th small { display: block; font-size: 0.7rem; color: var(--ink-mute); font-weight: 600; margin-top: 3px; line-height: 1.25; }
+  .tp-table tbody tr:nth-child(even) td { background: #fbfbf9; }
+  .tp-table td .slot { margin-bottom: 8px; line-height: 1.35; } .tp-table td .slot:last-child { margin-bottom: 0; }
+  .tp-table td .slot b { color: var(--ink); font-weight: 700; display: block; } .tp-table td .slot small { color: var(--ink-mute); display: block; font-size: 0.74rem; margin-top: 1px; }
+  .tp-table .cost-col { color: var(--gold-deep); font-weight: 800; white-space: nowrap; text-align: center; font-size: 0.92rem; }
+  .tp-table tr.total-row th, .tp-table tr.total-row td { background: var(--graphite); color: #fff; font-weight: 800; border-color: rgba(255,255,255,.12); }
+  .tp-table tr.total-row .total-meta { font-size: 0.8rem; color: rgba(255,255,255,.85); font-weight: 600; }
+  .tp-table tr.total-row .cost-col { color: var(--gold); font-size: 1.05rem; }
+  /* ===== מובייל: כל יום הופך לכרטיס מוערם — בלי גלילה אופקית ===== */
+  @media (max-width: 560px) {
+    .tp-table, .tp-table thead, .tp-table tbody, .tp-table tr, .tp-table th, .tp-table td { display: block; width: auto; }
+    .tp-table col, .tp-table colgroup { display: none; }
+    .tp-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); } /* מסתירים כותרות עמודה */
+    .tp-table tbody tr { border: 1px solid var(--line); border-radius: 13px; margin: 0 0 11px; overflow: hidden; background: var(--paper); }
+    .tp-table tbody tr:last-child { margin-bottom: 0; }
+    .tp-table tbody th { text-align: right; padding: 11px 14px; background: var(--graphite); color: #fff; border: 0; display: flex; align-items: baseline; gap: 9px; }
+    .tp-table tbody th .d-num { display: inline; font-size: 0.95rem; }
+    .tp-table tbody th small { display: inline; color: rgba(255,255,255,.8); margin: 0; font-size: 0.78rem; }
+    .tp-table tbody td { border: 0; border-top: 1px solid var(--line); padding: 10px 14px; display: grid; grid-template-columns: 76px 1fr; gap: 10px; align-items: start; }
+    .tp-table tbody td:before { content: attr(data-label); font-weight: 800; color: var(--ink-soft); font-size: 0.78rem; padding-top: 2px; }
+    .tp-table tbody td.cost-col { display: flex; justify-content: space-between; }
+    .tp-table tbody td.cost-col:before { content: attr(data-label); }
+    .tp-table tr.total-row { background: var(--graphite); }
+    .tp-table tr.total-row th { background: var(--graphite); }
+    .tp-table tr.total-row td.total-meta { color: rgba(255,255,255,.85); border-top-color: rgba(255,255,255,.15); display: block; }
+    .tp-table tr.total-row td.total-meta:before { display: none; }
+    .tp-table tr.total-row td.cost-col { color: var(--gold); border-top-color: rgba(255,255,255,.15); }
+  }
 
   .tp-day { background: var(--paper); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; margin-bottom: 15px; }
   .tp-day-hd { display: flex; align-items: center; gap: 13px; padding: 14px 17px; background: var(--graphite); }
@@ -374,14 +397,9 @@
           <p class="tp-sub">הנה הטיול שלכם, יום אחרי יום, שעה אחרי שעה. הסירו שורות שלא מתאימות, הוסיפו משלכם, וסמנו את ההכנות. הכל מוכן לשיתוף.</p>
           <div class="tp-plan-summary" id="tpSummary"></div>
           <div class="tp-plan-tools">
-            <div class="tp-viewtoggle" id="tpViewToggle">
-              <button class="on" data-view="cards" type="button"><i class="fas fa-layer-group"></i> כרטיסים</button>
-              <button data-view="table" type="button"><i class="fas fa-table"></i> טבלה</button>
-            </div>
             <button class="tp-tool gold" id="tpRebuild" type="button"><i class="fas fa-wand-magic-sparkles"></i> בנו לי מסלול מחדש</button>
           </div>
-          <div id="tpDayBoard"></div>
-          <div id="tpTableWrap" class="tp-tablewrap" style="display:none"></div>
+          <div id="tpTableWrap" class="tp-tablewrap"></div>
           <div class="tp-totals" id="tpTotals"></div>
           <div class="tp-notforget">
             <h3><i class="fas fa-clipboard-list"></i> לא לשכוח — צ׳קליסט הכנה</h3>
@@ -1223,7 +1241,6 @@ var HIGHLIGHTS = [
   }
 
   // שלב 6 — מסלול מפורט
-  var board = $('tpDayBoard');
   function dayCost(day) {
     var c = 0; day.rows.forEach(function (r) { c += (+r.cost || 0) * S.pax; });
     c += hotelPerNight(day.destKey) * S.pax;
@@ -1236,27 +1253,7 @@ var HIGHLIGHTS = [
       '<span class="tp-pill"><i class="fas fa-users"></i><b>' + S.pax + '</b> מטיילים</span>' +
       (whenTxt ? '<span class="tp-pill"><i class="fas fa-sun"></i>' + whenTxt + '</span>' : '') +
       '<span class="tp-pill"><i class="fas fa-location-dot"></i>' + S.dests.map(function (k) { return DEST[k] ? esc(DEST[k].t) : ''; }).filter(Boolean).join(' · ') + '</span>';
-    // ימים
-    board.innerHTML = S.plan.days.map(function (day, di) {
-      var rows = day.rows.map(function (r, ri) {
-        var costTxt = (+r.cost > 0) ? ('$' + (r.cost * S.pax).toLocaleString('en-US')) : '';
-        return '<div class="tp-row' + (r.type === 'logi' ? ' logi' : '') + '">' +
-          '<span class="tag">' + (TAG[r.tag] || '') + '</span>' +
-          '<span class="body"><b>' + esc(r.t) + '</b>' + (r.note ? '<span class="note">' + esc(r.note) + '</span>' : '') +
-          (r.map ? '<a class="map" href="https://www.google.com/maps/search/' + r.map + '" target="_blank" rel="noopener"><i class="fas fa-location-dot"></i> במפות</a>' : '') + '</span>' +
-          (costTxt ? '<span class="cost">' + costTxt + '</span>' : '') +
-          '<button class="del" data-del="' + di + '_' + ri + '" title="הסרה"><i class="fas fa-xmark"></i></button></div>';
-      }).join('');
-      var hotel = hotelPerNight(day.destKey);
-      return '<div class="tp-day"><div class="tp-day-hd">' +
-        '<span class="tp-day-num">' + (di + 1) + '</span>' +
-        '<span class="tp-day-ct"><b>יום ' + (di + 1) + ' — ' + esc(day.title) + '</b>' + (hotel ? '<span>לינה: ' + esc(day.destName) + ' · $' + (hotel * S.pax) + ' ללילה</span>' : '') + '</span>' +
-        '<span class="tp-day-cost"><b>$' + dayCost(day).toLocaleString('en-US') + '</b><span>סה״כ ליום</span></span>' +
-        '</div><div class="tp-rows">' + rows + '</div>' +
-        '<button class="tp-add-row" data-addday="' + di + '"><i class="fas fa-plus"></i> הוסיפו פעילות ליום הזה</button></div>';
-    }).join('');
     renderTable();
-    applyView();
     renderTotals();
     renderNotForget();
   }
@@ -1268,31 +1265,24 @@ var HIGHLIGHTS = [
     return items.map(function (r) { return '<div class="slot"><b>' + esc(r.t) + '</b>' + (r.note ? '<small>' + esc(r.note) + '</small>' : '') + '</div>'; }).join('');
   }
   function renderTable() {
-    var moveSlots = ['move', 'stay'];
     var rowsHtml = S.plan.days.map(function (day, di) {
       // שורת "מעבר/לוגיסטיקה" מתמזגת לבוקר אם קיימת
       var morning = slotRows(day, 'morning');
       var logi = day.rows.filter(function (r) { return r.tag === 'move' || r.tag === 'stay'; });
       if (logi.length) morning = logi.map(function (r) { return '<div class="slot"><b>🚐 ' + esc(r.t) + '</b></div>'; }).join('') + morning;
-      return '<tr><th>יום ' + (di + 1) + '<small>' + esc(day.destName) + '</small></th>' +
-        '<td>' + morning + '</td>' +
-        '<td>' + slotRows(day, 'noon') + '</td>' +
-        '<td>' + slotRows(day, 'eve') + '</td>' +
-        '<td class="cost-col">$' + dayCost(day).toLocaleString('en-US') + '</td></tr>';
+      return '<tr>' +
+        '<th scope="row"><span class="d-num">יום ' + (di + 1) + '</span><small>' + esc(day.destName) + '</small></th>' +
+        '<td data-label="בוקר">' + morning + '</td>' +
+        '<td data-label="צהריים">' + slotRows(day, 'noon') + '</td>' +
+        '<td data-label="ערב">' + slotRows(day, 'eve') + '</td>' +
+        '<td class="cost-col" data-label="תקציב ליום">$' + dayCost(day).toLocaleString('en-US') + '</td></tr>';
     }).join('');
     var grand = S.plan.days.reduce(function (a, d) { return a + dayCost(d); }, 0);
-    $('tpTableWrap').innerHTML = '<table class="tp-table"><thead><tr><th>יום</th><th>בוקר</th><th>צהריים</th><th>ערב</th><th>תקציב</th></tr></thead><tbody>' +
+    $('tpTableWrap').innerHTML = '<table class="tp-table"><colgroup><col class="c-day"><col class="c-slot"><col class="c-slot"><col class="c-slot"><col class="c-cost"></colgroup><thead><tr><th>יום</th><th>בוקר</th><th>צהריים</th><th>ערב</th><th>תקציב</th></tr></thead><tbody>' +
       rowsHtml +
-      '<tr class="total-row"><th>סה״כ</th><td colspan="3">' + S.days + ' ימים · ' + S.pax + ' מטיילים · ' + S.dests.map(function (k) { return DEST[k] ? esc(DEST[k].t) : ''; }).filter(Boolean).join(', ') + '</td><td class="cost-col">$' + grand.toLocaleString('en-US') + '</td></tr>' +
+      '<tr class="total-row"><th scope="row">סה״כ</th><td class="total-meta" colspan="3">' + S.days + ' ימים · ' + S.pax + ' מטיילים · ' + S.dests.map(function (k) { return DEST[k] ? esc(DEST[k].t) : ''; }).filter(Boolean).join(', ') + '</td><td class="cost-col" data-label="סה״כ">$' + grand.toLocaleString('en-US') + '</td></tr>' +
       '</tbody></table>';
   }
-  function applyView() {
-    var table = S.view === 'table';
-    $('tpDayBoard').style.display = table ? 'none' : '';
-    $('tpTableWrap').style.display = table ? 'block' : 'none';
-    document.querySelectorAll('#tpViewToggle button').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-view') === (S.view || 'cards')); });
-  }
-  function onViewClick(b) { S.view = b.getAttribute('data-view'); save(); applyView(); }
   function renderTotals() {
     var acts = 0, meals = 0, hotels = 0, logi = 0;
     S.plan.days.forEach(function (day) {
@@ -1419,9 +1409,6 @@ var HIGHLIGHTS = [
     if ((el = e.target.closest('#tpExp [data-exp]'))) { onExpClick(el); return; }
     if ((el = e.target.closest('#tpDestWrap [data-dest]'))) { onDestClick(el); return; }
     if ((el = e.target.closest('#tpExtrasWrap [data-ex]')) && !e.target.closest('.tp-pick-site')) { onExtraClick(el); return; }
-    if ((el = e.target.closest('#tpViewToggle [data-view]'))) { onViewClick(el); return; }
-    if ((el = e.target.closest('#tpDayBoard [data-del]'))) { onDelRow(el); return; }
-    if ((el = e.target.closest('#tpDayBoard [data-addday]'))) { onAddDay(el); return; }
     if ((el = e.target.closest('#tpNotForget [data-chk]'))) { onChkClick(el); return; }
     if ((el = e.target.closest('#tpRebuild'))) { onRebuild(); return; }
     if ((el = e.target.closest('#tpModalBd [data-opt]'))) { onModalOpt(el); return; }
