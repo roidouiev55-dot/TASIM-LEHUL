@@ -128,7 +128,7 @@
   .tp-pick { position: relative; border: 0; padding: 0; border-radius: 16px; overflow: hidden; cursor: pointer; aspect-ratio: 1 / 1; display: block; text-align: right; background: #ddd; transition: transform .15s; }
   .tp-pick:hover { transform: translateY(-2px); }
   .tp-pick .bg { position: absolute; inset: 0; background-size: cover; background-position: center; z-index: 0; transition: transform .3s, opacity .4s; background-color: #2a2e38; opacity: 1; }
-  .tp-pick .bg[data-wiki]:not(.loaded) { background-image: linear-gradient(135deg, #2a2e38, #1f232b); }
+  .tp-pick .bg[data-img]:not(.loaded), .tp-pick .bg[data-fb]:not(.loaded) { background-image: linear-gradient(135deg, #2a2e38, #1f232b); }
   .tp-pick .bg.loaded { animation: tpImgIn .45s ease; }
   @keyframes tpImgIn { from { opacity: .3; } to { opacity: 1; } }
   .tp-pick:hover .bg { transform: scale(1.05); }
@@ -849,10 +849,102 @@ var HIGHLIGHTS = [
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
 
   // ====== מנוע תמונות ======
-  // כל אריח נושא data-wiki (שם המקום) ו-data-fb (תמונת גיבוי יציבה ליעד). מנסים Wikimedia חי; אם נכשל/ריק — גיבוי.
-  var _imgCache = {};
-  // תמונות גיבוי יציבות (Special:FilePath — תמיד מפנה לקובץ הנוכחי) לכל יעד/קטגוריה
+  // ===== מנוע תמונות: תמונה ייחודית לכל אריח =====
+  // כל אריח נושא data-img (קובץ Commons ספציפי למקום) ו-data-fb (גיבוי ליעד אם הקובץ נכשל).
+  // אין fetch חי — התמונות קבועות וייחודיות, כך אין חזרות ואין התאמות שגויות.
   function FPATH(n) { return 'https://commons.wikimedia.org/wiki/Special:FilePath/' + encodeURIComponent(n) + '?width=640'; }
+  var IMGMAP = {
+    'beaches': 'Copacabana, Rio de Janeiro, Brazil.jpg',
+    'city': 'Rio de Janeiro - Pão de Açúcar e Botafogo vistos do Corcovado.jpg',
+    'nature': 'Cataratas do Iguaçu 2017.jpg',
+    'nightlife': 'Arcos da Lapa (Aqueduto da Carioca) - Rio de Janeiro, Brazil.jpg',
+    'food': 'Picanha no espeto.jpg',
+    'icon': 'Cristo Redentor - Rio de Janeiro, Brasil.jpg',
+    'rio': 'Rio de Janeiro - Pão de Açúcar e Botafogo vistos do Corcovado.jpg',
+    'iguacu': 'Cataratas do Iguaçu 2017.jpg',
+    'salvador': 'Pelourinho 2.jpg',
+    'pantanal': 'Panthera onca at Three Brothers River.jpg',
+    'jeri': 'Jericoacoara - panoramio.jpg',
+    'saopaulo': 'SaoPaulo Downtown.jpg',
+    'floripa': 'Florianópolis - SC - panoramio (1).jpg',
+    'buzios': 'Buzios RJ.jpg',
+    'chapada': 'Chapada Diamantina.jpg',
+    'h-escadaria': 'Escadaria Selarón (36927663745).jpg',
+    'h-botanico': 'Jardim Botânico do Rio de Janeiro 02.jpg',
+    'h-santateresa': 'Bonde de Santa Teresa 2.jpg',
+    'h-arpoador': 'Pôr do sol no Arpoador.jpg',
+    'h-maracana': 'Maracanã Stadium in Rio de Janeiro 2014.jpg',
+    'h-amanha': 'Museu do Amanhã - Rio de Janeiro.jpg',
+    'h-tijuca': 'Floresta da Tijuca.jpg',
+    'h-aqua': 'AquaRio - aquarium in Rio de Janeiro.jpg',
+    'h-favela': 'Rocinha favela, Rio de Janeiro.jpg',
+    'h-hangglide': 'Voo livre na Pedra Bonita.jpg',
+    'h-boat': 'Baía de Guanabara vista do Pão de Açúcar.jpg',
+    'h-feijoada': 'Feijoada à brasileira.jpg',
+    'h-churrasco-rio': 'Picanha no espeto.jpg',
+    'h-acai': 'Açaí na tigela.jpg',
+    'h-copacabana-palace': 'Copacabana Palace Hotel Rio de Janeiro.jpg',
+    'h-circo': 'Arcos da Lapa (Aqueduto da Carioca) - Rio de Janeiro, Brazil.jpg',
+    'h-vivorio': 'Rio de Janeiro - Pão de Açúcar e Botafogo vistos do Corcovado.jpg',
+    'h-scenarium': 'Lapa - Rio de Janeiro.jpg',
+    'h-lapa': 'Arcos da Lapa à noite.jpg',
+    'h-iguacu-br': 'Cataratas do Iguaçu 2017.jpg',
+    'h-garganta': 'Garganta del Diablo - Iguazú.jpg',
+    'h-aves': 'Ramphastos toco -Parque das Aves, Foz do Iguacu, Brazil-8a.jpg',
+    'h-itaipu': 'Itaipu Dam.jpg',
+    'h-macuco': 'Iguazu Falls, Brazil (6983587283).jpg',
+    'h-helicopter': 'Iguazu Falls aerial view.jpg',
+    'h-pelourinho': 'Pelourinho 2.jpg',
+    'h-bonfim': 'Igreja do Bonfim, Salvador, Bahia, Brasil.jpg',
+    'h-lacerda': 'Elevador Lacerda Salvador 2.jpg',
+    'h-farol': 'Farol da Barra Salvador.jpg',
+    'h-mercado': 'Mercado Modelo Salvador.jpg',
+    'h-capoeira': 'Capoeira na praia.jpg',
+    'h-cooking': 'Moqueca de camarão.jpg',
+    'h-itaparica': 'Ilha de Itaparica, Bahia.jpg',
+    'h-moqueca': 'Moqueca baiana.jpg',
+    'h-acaraje': 'Acarajé.jpg',
+    'h-olodum': 'Olodum - Pelourinho.jpg',
+    'h-pelo-tuesday': 'Pelourinho, Salvador, Bahia.jpg',
+    'h-concha': 'Concha Acústica Castro Alves.jpg',
+    'h-jaguar': 'Panthera onca at Three Brothers River.jpg',
+    'h-nightsafari': 'Pantanal landscape.jpg',
+    'h-piranha': 'Pygocentrus nattereri.jpg',
+    'h-horse-pantanal': 'Pantanal Matogrossense.jpg',
+    'h-birding': 'Anodorhynchus hyacinthinus -Pantanal, Brazil-8.jpg',
+    'h-duna': 'Duna do Pôr do Sol - Jericoacoara.jpg',
+    'h-pedra': 'Pedra Furada - Jericoacoara.jpg',
+    'h-lagoon': 'Lagoa do Paraíso - Jijoca de Jericoacoara.jpg',
+    'h-tatajuba': 'Dunas de Tatajuba.jpg',
+    'h-kite': 'Kitesurf Jericoacoara.jpg',
+    'h-capoeira-jeri': 'Forró pé de serra.jpg',
+    'h-forro-jeri': 'Jericoacoara - panoramio.jpg',
+    'h-masp': 'MASP - Museu de Arte de São Paulo.jpg',
+    'h-ibira': 'Parque Ibirapuera.jpg',
+    'h-batman': 'Beco do Batman São Paulo.jpg',
+    'h-liberdade': 'Bairro da Liberdade São Paulo.jpg',
+    'h-mercadao': 'Mercado Municipal de São Paulo.jpg',
+    'h-sampa-dining': 'Jardins São Paulo.jpg',
+    'h-dedalo': 'Vila Madalena São Paulo.jpg',
+    'h-allianz': 'Allianz Parque São Paulo.jpg',
+    'h-lagoa-floripa': 'Lagoa da Conceição Florianópolis.jpg',
+    'h-joaquina': 'Praia da Joaquina Florianópolis.jpg',
+    'h-lagoinha': 'Lagoinha do Leste Florianópolis.jpg',
+    'h-sandboard': 'Dunas da Joaquina Florianópolis.jpg',
+    'h-oyster': 'Ostras de Florianópolis.jpg',
+    'h-jurere': 'Jurerê Internacional Florianópolis.jpg',
+    'h-ruadaspedras': 'Rua das Pedras Búzios.jpg',
+    'h-ferradura': 'Praia da Ferradura Búzios.jpg',
+    'h-geriba': 'Praia de Geribá Búzios.jpg',
+    'h-ossos': 'Praia dos Ossos Búzios.jpg',
+    'h-schooner': 'Búzios RJ.jpg',
+    'h-fumaca': 'Cachoeira da Fumaça Chapada Diamantina.jpg',
+    'h-painacio': 'Morro do Pai Inácio Chapada Diamantina.jpg',
+    'h-pocoazul': 'Poço Azul Chapada Diamantina.jpg',
+    'h-pati': 'Vale do Pati Chapada Diamantina.jpg',
+    'h-poamarelo': 'Cachoeira do Buracão Chapada Diamantina.jpg'
+  };
+  // גיבוי לפי יעד/קטגוריה — רק אם התמונה הייחודית נכשלה בטעינה
   var FB = {
     rio: FPATH('Rio de Janeiro - Pão de Açúcar e Botafogo vistos do Corcovado.jpg'),
     iguacu: FPATH('Cataratas do Iguaçu 2017.jpg'),
@@ -871,53 +963,29 @@ var HIGHLIGHTS = [
     icon: FPATH('Cristo Redentor - Rio de Janeiro, Brasil.jpg')
   };
   function fbFor(key) { return FB[key] || FB.rio; }
-  function isValidPlaceImage(title, url) {
-    var lower = (title + ' ' + url).toLowerCase();
-    var forbidden = ['map', 'flag', 'logo', 'coat of arms', 'emblem', 'icon', 'locator', 'chart', 'diagram', 'cat', 'kitten', 'dog', 'portrait', 'seal', 'poster', 'banner', 'sign', '.svg'];
-    for (var i = 0; i < forbidden.length; i++) { if (lower.indexOf(forbidden[i]) !== -1) return false; }
-    return true;
-  }
-  function fetchWikiImage(term, cb) {
-    if (!term) { cb(null); return; }
-    if (_imgCache[term] !== undefined) { cb(_imgCache[term]); return; }
-    // שאילתה פשוטה — רק השם, בלי אופרטורים שמצמצמים מדי
-    var api = 'https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=' +
-      encodeURIComponent(term) + '&gsrnamespace=6&gsrlimit=12&prop=imageinfo&iiprop=url|size&iiurlwidth=640&format=json&origin=*';
-    var done = false;
-    var timer = setTimeout(function () { if (!done) { done = true; _imgCache[term] = null; cb(null); } }, 6000);
-    fetch(api).then(function (r) { return r.json(); }).then(function (data) {
-      if (done) return; done = true; clearTimeout(timer);
-      var url = null;
-      if (data.query && data.query.pages) {
-        var pages = Object.keys(data.query.pages).map(function (k) { return data.query.pages[k]; });
-        pages.sort(function (a, b) { return (a.index || 0) - (b.index || 0); });
-        // קודם מחפשים תמונה רוחבית תקינה; אם אין — מקבלים כל תמונה תקינה
-        for (var pass = 0; pass < 2 && !url; pass++) {
-          for (var i = 0; i < pages.length; i++) {
-            var p = pages[i]; if (!p.imageinfo || !p.imageinfo[0]) continue;
-            var info = p.imageinfo[0];
-            if (!isValidPlaceImage(p.title, info.url)) continue;
-            if (pass === 0 && info.width < info.height) continue;
-            url = info.thumburl || info.url; break;
-          }
-        }
-      }
-      _imgCache[term] = url; cb(url);
-    }).catch(function () { if (done) return; done = true; clearTimeout(timer); _imgCache[term] = null; cb(null); });
-  }
-  // טעינה: Wikimedia חי, ואם אין תוצאה — תמונת הגיבוי של היעד (data-fb). כך אריח אף פעם לא נשאר ריק.
+  // URL התמונה הייחודית של אריח לפי ה-id שלו; אם אין במפה — ריק (ייפול לגיבוי)
+  function imgUrl(id) { return IMGMAP[id] ? FPATH(IMGMAP[id]) : ''; }
+  // טעינה: קודם התמונה הייחודית; onerror -> גיבוי היעד. lazy עם IntersectionObserver.
   var _imgObserver = null;
   function loadGalleryImages(root) {
     root = root || document;
-    var nodes = root.querySelectorAll('.bg[data-wiki]:not([data-loaded])');
-    function setImg(bg, url) { if (url) { bg.style.backgroundImage = "url('" + url + "')"; bg.classList.add('loaded'); } }
+    var nodes = root.querySelectorAll('.bg[data-img]:not([data-loaded]), .bg[data-fb]:not([data-loaded])');
+    function paint(bg, url) { if (url) { bg.style.backgroundImage = "url('" + url + "')"; bg.classList.add('loaded'); } }
     function loadOne(bg) {
       bg.setAttribute('data-loaded', '1');
-      var term = bg.getAttribute('data-wiki');
+      var primary = bg.getAttribute('data-img');
       var fb = bg.getAttribute('data-fb');
-      // טוענים קודם את הגיבוי מיד (כך תמיד רואים תמונה), ואז מנסים לשדרג לתמונה הספציפית
-      if (fb) setImg(bg, fb);
-      fetchWikiImage(term, function (url) { if (url) setImg(bg, url); });
+      if (primary) {
+        // בודקים שהתמונה נטענת; אם נכשלת — נופלים לגיבוי
+        var probe = new Image();
+        probe.onload = function () { paint(bg, primary); };
+        probe.onerror = function () { if (fb) paint(bg, fb); };
+        probe.src = primary;
+        // אם הגיבוי קיים, מציגים אותו מיד כדי שלא יישאר ריק, והתמונה הייחודית תחליף אם תצליח
+        if (fb) paint(bg, fb);
+      } else if (fb) {
+        paint(bg, fb);
+      }
     }
     if ('IntersectionObserver' in window) {
       if (!_imgObserver) {
@@ -1026,7 +1094,7 @@ var HIGHLIGHTS = [
   function renderExp() {
     $('tpExp').innerHTML = EXPERIENCES.map(function (e) {
       var on = S.exp.indexOf(e.id) !== -1;
-      return '<div class="tp-pick-wrap"><button class="tp-pick' + (on ? ' on' : '') + '" data-exp="' + e.id + '" type="button"><span class="bg" data-wiki="' + esc(e.wiki || '') + '" data-fb="' + fbFor(e.id) + '"></span><span class="chk"><i class="fas fa-check"></i></span><span class="cap"><b>' + esc(e.t) + '</b><span>' + esc(e.s) + '</span></span></button><button class="tp-pick-info" data-info="' + esc(e.note || e.s || '') + '" data-title="' + esc(e.t) + '" type="button" aria-label="הסבר"><i class="fas fa-info"></i></button></div>';
+      return '<div class="tp-pick-wrap"><button class="tp-pick' + (on ? ' on' : '') + '" data-exp="' + e.id + '" type="button"><span class="bg" data-img="' + imgUrl(e.id) + '" data-fb="' + fbFor(e.id) + '"></span><span class="chk"><i class="fas fa-check"></i></span><span class="cap"><b>' + esc(e.t) + '</b><span>' + esc(e.s) + '</span></span></button><button class="tp-pick-info" data-info="' + esc(e.note || e.s || '') + '" data-title="' + esc(e.t) + '" type="button" aria-label="הסבר"><i class="fas fa-info"></i></button></div>';
     }).join('');
     $('tpExpCount').textContent = S.exp.length;
     loadGalleryImages($('tpExp'));
@@ -1041,7 +1109,7 @@ var HIGHLIGHTS = [
     if (!keys.length) { $('tpDestWrap').innerHTML = '<div class="tp-empty-places"><i class="fas fa-arrow-right-long"></i>חזרו שלב אחורה וסמנו מה מושך אתכם.</div>'; return; }
     $('tpDestWrap').innerHTML = '<div class="tp-gallery dense">' + keys.map(function (k) {
       var d = DEST[k], on = S.dests.indexOf(k) !== -1;
-      return '<div class="tp-pick-wrap"><button class="tp-pick' + (on ? ' on' : '') + '" data-dest="' + k + '" type="button"><span class="bg" data-wiki="' + esc(d.wiki || '') + '" data-fb="' + fbFor(k) + '"></span><span class="chk"><i class="fas fa-check"></i></span><span class="cap"><b>' + esc(d.t) + '</b><span>' + esc(d.s) + '</span></span></button><button class="tp-pick-info" data-info="' + esc(d.note || d.s || '') + '" data-title="' + esc(d.t) + '" type="button" aria-label="הסבר"><i class="fas fa-info"></i></button></div>';
+      return '<div class="tp-pick-wrap"><button class="tp-pick' + (on ? ' on' : '') + '" data-dest="' + k + '" type="button"><span class="bg" data-img="' + imgUrl(k) + '" data-fb="' + fbFor(k) + '"></span><span class="chk"><i class="fas fa-check"></i></span><span class="cap"><b>' + esc(d.t) + '</b><span>' + esc(d.s) + '</span></span></button><button class="tp-pick-info" data-info="' + esc(d.note || d.s || '') + '" data-title="' + esc(d.t) + '" type="button" aria-label="הסבר"><i class="fas fa-info"></i></button></div>';
     }).join('') + '</div><p class="tp-gallery-note">בחרתם <b>' + S.dests.length + '</b> יעדים. נחלק ביניהם את ' + S.days + ' הימים.</p>';
     loadGalleryImages($('tpDestWrap'));
   }
@@ -1076,7 +1144,7 @@ var HIGHLIGHTS = [
           var destName = DEST[h.destKey] ? DEST[h.destKey].t : '';
           var siteLink = h.site ? '<a class="tp-pick-site" href="' + h.site + '" target="_blank" rel="noopener" title="לאתר / לבדיקת מופעים"><i class="fas fa-arrow-up-right-from-square"></i></a>' : '';
           var infoBtn = '<button class="tp-pick-info" data-info="' + esc(h.note || '') + '" data-title="' + esc(h.t) + '" type="button" aria-label="הסבר"><i class="fas fa-info"></i></button>';
-          return '<div class="tp-pick-wrap"><button class="tp-pick' + (on ? ' on' : '') + '" data-ex="' + h.id + '" type="button"><span class="bg" data-wiki="' + esc(h.wiki || '') + '" data-fb="' + fbFor(h.destKey) + '"></span><span class="chk"><i class="fas fa-check"></i></span><span class="cap"><b>' + esc(h.t) + '</b><span>' + esc(destName) + (h.cost ? ' · $' + h.cost : '') + '</span></span></button>' + infoBtn + siteLink + '</div>';
+          return '<div class="tp-pick-wrap"><button class="tp-pick' + (on ? ' on' : '') + '" data-ex="' + h.id + '" type="button"><span class="bg" data-img="' + imgUrl(h.id) + '" data-fb="' + fbFor(h.destKey) + '"></span><span class="chk"><i class="fas fa-check"></i></span><span class="cap"><b>' + esc(h.t) + '</b><span>' + esc(destName) + (h.cost ? ' · $' + h.cost : '') + '</span></span></button>' + infoBtn + siteLink + '</div>';
         }).join('') + '</div></div>';
     });
     wrap.innerHTML = html + '<p class="tp-gallery-note">סימנתם <b>' + S.extras.length + '</b> חוויות. הן ישובצו אוטומטית למסלול ביעד המתאים.</p>';
