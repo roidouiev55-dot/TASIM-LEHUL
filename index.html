@@ -1044,6 +1044,7 @@ var HIGHLIGHTS = [
   var _imgObserver = null;
   function loadGalleryImages(root) {
     root = root || document;
+    _usedImages = {};  // כל גלריה מתחילה רישום נקי — אין חסימות שנשארו מרינדור קודם
     var nodes = root.querySelectorAll('.bg[data-wp]:not([data-loaded]), .bg[data-fb]:not([data-loaded])');
     function paint(bg, url) { if (url) { bg.style.backgroundImage = "url('" + url + "')"; bg.classList.add('loaded'); } }
     function loadOne(bg) {
@@ -1176,6 +1177,12 @@ var HIGHLIGHTS = [
 
   // שלב 3
   function renderExp() {
+    // רינדור פעם אחת בלבד — אם כבר קיים, רק מסנכרנים את מצב הבחירה (בלי לטעון תמונות מחדש)
+    if ($('tpExp').querySelector('.tp-pick')) {
+      $('tpExp').querySelectorAll('.tp-pick[data-exp]').forEach(function (b) { b.classList.toggle('on', S.exp.indexOf(b.getAttribute('data-exp')) !== -1); });
+      $('tpExpCount').textContent = S.exp.length;
+      return;
+    }
     $('tpExp').innerHTML = EXPERIENCES.map(function (e) {
       var on = S.exp.indexOf(e.id) !== -1;
       return '<div class="tp-pick-wrap"><button class="tp-pick' + (on ? ' on' : '') + '" data-exp="' + e.id + '" type="button"><span class="bg" data-wp="' + wpFor(e.id) + '" data-fb="' + fbFor(e.id) + '"></span><span class="chk"><i class="fas fa-check"></i></span><span class="cap"><b>' + esc(e.t) + '</b><span>' + esc(e.s) + '</span></span></button><button class="tp-pick-info" data-info="' + esc(e.note || e.s || '') + '" data-title="' + esc(e.t) + '" type="button" aria-label="הסבר"><i class="fas fa-info"></i></button></div>';
@@ -1183,14 +1190,29 @@ var HIGHLIGHTS = [
     $('tpExpCount').textContent = S.exp.length;
     loadGalleryImages($('tpExp'));
   }
-  function onExpClick(b) { var id = b.getAttribute('data-exp'); var i = S.exp.indexOf(id); if (i === -1) S.exp.push(id); else S.exp.splice(i, 1); save(); renderExp(); }
+  function onExpClick(b) {
+    var id = b.getAttribute('data-exp'); var i = S.exp.indexOf(id);
+    if (i === -1) S.exp.push(id); else S.exp.splice(i, 1);
+    save();
+    b.classList.toggle('on', S.exp.indexOf(id) !== -1);  // עדכון במקום — בלי לרנדר מחדש (התמונות לא נטענות שוב)
+    $('tpExpCount').textContent = S.exp.length;
+  }
 
   // שלב 4
   function relevantTags() { var t = {}; EXPERIENCES.forEach(function (e) { if (S.exp.indexOf(e.id) !== -1) e.tags.forEach(function (x) { t[x] = true; }); }); return t; }
+  var _destSig = null;
   function renderDests() {
     var tags = relevantTags();
     var keys = Object.keys(DEST).filter(function (k) { return !Object.keys(tags).length || DEST[k].tags.some(function (t) { return tags[t]; }); });
-    if (!keys.length) { $('tpDestWrap').innerHTML = '<div class="tp-empty-places"><i class="fas fa-arrow-right-long"></i>חזרו שלב אחורה וסמנו מה מושך אתכם.</div>'; return; }
+    if (!keys.length) { $('tpDestWrap').innerHTML = '<div class="tp-empty-places"><i class="fas fa-arrow-right-long"></i>חזרו שלב אחורה וסמנו מה מושך אתכם.</div>'; _destSig = null; return; }
+    // אם אותם יעדים כבר מוצגים — רק מסנכרנים בחירה, בלי לטעון תמונות מחדש
+    var sig = keys.join(',');
+    if (sig === _destSig && $('tpDestWrap').querySelector('.tp-pick')) {
+      $('tpDestWrap').querySelectorAll('.tp-pick[data-dest]').forEach(function (b) { b.classList.toggle('on', S.dests.indexOf(b.getAttribute('data-dest')) !== -1); });
+      var n = $('tpDestWrap').querySelector('.tp-gallery-note b'); if (n) n.textContent = S.dests.length;
+      return;
+    }
+    _destSig = sig;
     $('tpDestWrap').innerHTML = '<div class="tp-gallery dense">' + keys.map(function (k) {
       var d = DEST[k], on = S.dests.indexOf(k) !== -1;
       return '<div class="tp-pick-wrap"><button class="tp-pick' + (on ? ' on' : '') + '" data-dest="' + k + '" type="button"><span class="bg" data-wp="' + wpFor(k) + '" data-fb="' + fbFor(k) + '"></span><span class="chk"><i class="fas fa-check"></i></span><span class="cap"><b>' + esc(d.t) + '</b><span>' + esc(d.s) + '</span></span></button><button class="tp-pick-info" data-info="' + esc(d.note || d.s || '') + '" data-title="' + esc(d.t) + '" type="button" aria-label="הסבר"><i class="fas fa-info"></i></button></div>';
@@ -1202,7 +1224,10 @@ var HIGHLIGHTS = [
     if (i === -1) S.dests.push(k); else S.dests.splice(i, 1);
     // ננקה חוויות של יעד שהוסר
     S.extras = (S.extras || []).filter(function (hid) { var h = HIGHLIGHTS.filter(function (x){return x.id===hid;})[0]; return h && S.dests.indexOf(h.destKey) !== -1; });
-    S.plan = null; save(); renderDests();
+    S.plan = null; save();
+    b.classList.toggle('on', S.dests.indexOf(k) !== -1);  // עדכון במקום — בלי לרנדר מחדש
+    var note = $('tpDestWrap').querySelector('.tp-gallery-note b');
+    if (note) note.textContent = S.dests.length;
   }
 
   // שלב 5 — אסור לפספס / מאכלים / חוויות (לפי היעדים שנבחרו)
@@ -1213,11 +1238,20 @@ var HIGHLIGHTS = [
     { k: 'exp', t: 'חוויות מיוחדות', i: 'fa-person-hiking' },
     { k: 'food', t: 'מאכלים מוכרים', i: 'fa-utensils' }
   ];
+  var _extraSig = null;
   function renderExtras() {
     var wrap = $('tpExtrasWrap');
-    if (!S.dests.length) { wrap.innerHTML = '<div class="tp-empty-places"><i class="fas fa-arrow-right-long"></i>קודם בחרו יעדים בשלב הקודם.</div>'; return; }
+    if (!S.dests.length) { wrap.innerHTML = '<div class="tp-empty-places"><i class="fas fa-arrow-right-long"></i>קודם בחרו יעדים בשלב הקודם.</div>'; _extraSig = null; return; }
     var pool = HIGHLIGHTS.filter(function (h) { return S.dests.indexOf(h.destKey) !== -1; });
     S.extras = S.extras || [];
+    // אם אותן חוויות כבר מוצגות — רק מסנכרנים בחירה, בלי לטעון תמונות מחדש
+    var sig = S.dests.slice().sort().join(',');
+    if (sig === _extraSig && wrap.querySelector('.tp-pick')) {
+      wrap.querySelectorAll('.tp-pick[data-ex]').forEach(function (b) { b.classList.toggle('on', S.extras.indexOf(b.getAttribute('data-ex')) !== -1); });
+      var n = wrap.querySelector('.tp-gallery-note b'); if (n) n.textContent = S.extras.length;
+      return;
+    }
+    _extraSig = sig;
     var html = '';
     CATS.forEach(function (c) {
       var items = pool.filter(function (h) { return h.cat === c.k; });
@@ -1237,7 +1271,10 @@ var HIGHLIGHTS = [
   function onExtraClick(b) {
     var id = b.getAttribute('data-ex'); var i = S.extras.indexOf(id);
     if (i === -1) S.extras.push(id); else S.extras.splice(i, 1);
-    S.plan = null; save(); renderExtras();
+    S.plan = null; save();
+    b.classList.toggle('on', S.extras.indexOf(id) !== -1);  // עדכון במקום — בלי לרנדר מחדש
+    var note = $('tpExtrasWrap').querySelector('.tp-gallery-note b');
+    if (note) note.textContent = S.extras.length;
   }
 
   // שלב 6 — מסלול מפורט
@@ -1344,13 +1381,43 @@ var HIGHLIGHTS = [
   // שיתוף וואטסאפ — מסלול מפורט
   function tripText() {
     var whenTxt = whenLabel();
-    var L = ['🇧🇷 המסלול שלי לברזיל', 'תוכנן עם טסים לחו״ל', '', '🗓️ ' + S.days + ' ימים · ' + S.pax + ' מטיילים' + (whenTxt ? ' · ' + whenTxt : ''), ''];
+    var SLOT = { morning: '🌅 בוקר', noon: '☀️ צהריים', eve: '🌙 ערב', move: '🚐 מעבר', stay: '🏨 לינה' };
+    var SLOT_ORDER = ['move', 'stay', 'morning', 'noon', 'eve'];
+    var dests = S.dests.map(function (k) { return DEST[k] ? DEST[k].t : ''; }).filter(Boolean).join(' · ');
+    var L = [];
+    L.push('🇧🇷 *המסלול שלי לברזיל*');
+    L.push('_תוכנן עם טסים לחו״ל_');
+    L.push('');
+    L.push('🗓️ *' + S.days + '* ימים  │  👥 *' + S.pax + '* מטיילים' + (whenTxt ? '  │  🌤️ ' + whenTxt : ''));
+    L.push('📍 ' + dests);
+    L.push('');
+    L.push('━━━━━━━━━━━━━━━');
+    var grand = 0;
     S.plan.days.forEach(function (day, di) {
-      L.push('━━━ יום ' + (di + 1) + ' — ' + day.title + ' ━━━');
-      day.rows.forEach(function (r) { L.push((TAG[r.tag] ? TAG[r.tag] + ': ' : '') + r.t); });
+      var dc = dayCost(day); grand += dc;
       L.push('');
+      L.push('*יום ' + (di + 1) + ' · ' + day.title + '*');
+      L.push('📌 ' + day.destName + '   💵 $' + dc.toLocaleString('en-US'));
+      // מקבצים לפי חלק ביום, לפי סדר הגיוני
+      SLOT_ORDER.forEach(function (sk) {
+        var items = day.rows.filter(function (r) { return r.tag === sk; });
+        if (!items.length) return;
+        items.forEach(function (r, idx) {
+          var head = (idx === 0 && SLOT[sk]) ? (SLOT[sk] + ':  ') : '       ';
+          L.push(head + '*' + r.t + '*' + (+r.cost > 0 ? '  ($' + (r.cost * S.pax).toLocaleString('en-US') + ')' : ''));
+          if (r.note) L.push('          _' + r.note + '_');
+        });
+      });
+      var hotel = hotelPerNight(day.destKey);
+      if (hotel) L.push('🏨 לינה ב' + day.destName + ' · $' + (hotel * S.pax) + ' ללילה');
+      L.push('┄┄┄┄┄┄┄┄┄┄┄');
     });
-    L.push('💰 תקציב משוער: ראו מתכנן.'); L.push('בנו גם אתם: https://tasim-lehul.com/brazil');
+    L.push('');
+    L.push('💰 *סה״כ משוער: $' + grand.toLocaleString('en-US') + '*');
+    L.push('_(' + S.days + ' ימים · ' + S.pax + ' מטיילים, כולל לינה ופעילויות)_');
+    L.push('');
+    L.push('✨ בנו גם אתם מסלול משלכם:');
+    L.push('🔗 https://tasim-lehul.com/brazil');
     return L.join('\n');
   }
 
