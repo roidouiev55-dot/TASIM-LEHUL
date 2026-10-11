@@ -1,0 +1,1191 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+<meta name="robots" content="noindex">
+<title>מתכנן טיולים לברזיל — טסים לחו״ל</title>
+<style>html,body{margin:0;padding:0;background:#1a1d24;}</style>
+</head>
+<body>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+  /* ============================================================
+     טסים לחו״ל · מתכנן טיולים לברזיל · v2
+     wizard → מסלול יום-יום מפורט (שורות מרובות ליום) + תקציב מפורט + צ׳קליסט
+     ============================================================ */
+  /* איפוס גלובלי של תבנית וורדפרס (אסטרה וכו׳) — מבטל מרווחים שגורמים לפס לבן בראש */
+  header.entry-header, .entry-title, .post-title, .page-title, h1.entry-title { display: none !important; }
+  .entry-content, .site-content, .ast-container, .site-main, #content, .content-area, .page-content, .ast-container-fluid, .ast-article-single {
+    max-width: 100% !important; padding: 0 !important; margin: 0 !important; width: 100% !important; overflow-x: hidden !important;
+  }
+  .entry-content > *:first-child, .ast-container > *:first-child, .site-main > *:first-child, #content > *:first-child { margin-top: 0 !important; padding-top: 0 !important; }
+  /* הסרת רווח עליון שאסטרה מוסיפה מעל התוכן */
+  .ast-separate-container .ast-article-single, .ast-separate-container #content, .single .site-content { padding-top: 0 !important; margin-top: 0 !important; }
+
+  .tp {
+    --graphite: #1a1d24; --graphite-2: #242832; --gold: #f5c518; --gold-deep: #d9a900;
+    --paper: #ffffff; --bg: #eeeeec; --ink: #23262e; --ink-soft: #52565f; --ink-mute: #8a8e97;
+    --line: #e2e2de; --good: #2f8f5b; --bad: #d64633;
+    font-family: 'Heebo', sans-serif; direction: rtl; text-align: right;
+    color: var(--ink);
+    /* רקע כהה על המעטפת עצמה — כך שכל פער שנשאר מעל ההירו יהיה כהה ולא לבן (כמו בהירו הראשי שלכם) */
+    background: var(--graphite) !important;
+    width: 100vw !important; max-width: 100vw !important;
+    margin-right: calc(-50vw + 50%) !important; margin-left: calc(-50vw + 50%) !important;
+    margin-top: -150px !important; position: relative; overflow: visible;
+    box-sizing: border-box; display: block; font-size: 17px; line-height: 1.7;
+  }
+  /* רצועת גרפיט שממלאת כלפי מעלה כל פער שנשאר בין תקרת העמוד להירו */
+  .tp::before { content: ''; position: absolute; left: 0; right: 0; top: -200px; height: 220px; background: var(--graphite); z-index: 0; }
+  /* אזור התוכן שמתחת להירו — רקע בהיר. ההירו והפוטר כהים בעצמם. */
+  .tp-hero, .tp-wrap, .tp-foot { position: relative; z-index: 1; }
+  .tp-contentbg { background: var(--bg); position: relative; z-index: 1; }
+  .tp *, .tp *::before, .tp *::after { box-sizing: border-box; }
+  .tp a { text-decoration: none; color: inherit; }
+  .tp button { font-family: inherit; }
+  .tp-wrap { max-width: 1080px; margin-inline: auto; padding-inline: 20px; }
+
+  /* ---------- HERO ---------- */
+  .tp-hero {
+    position: relative; padding: 168px 0 118px; margin-top: -2px; background-color: var(--graphite);
+    background-image: linear-gradient(to top, rgba(26,29,36,0.96) 0%, rgba(26,29,36,0.78) 45%, rgba(26,29,36,0.55) 100%),
+      url('https://tasim-lehul.com/wp-content/uploads/2026/04/v2_c1a563bc-6d55-4ddf-9197-c7f7e6b2369e.png');
+    background-size: cover; background-position: center 40%;
+  }
+  .tp-hero::before { content: ''; position: absolute; left: 0; right: 0; top: -160px; height: 170px; background: var(--graphite); z-index: 0; }
+  .tp-hero > * { position: relative; z-index: 1; }
+  .tp-hero-logo { height: 38px; width: auto; display: block; margin-bottom: 22px; }
+  .tp-hero-tag { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 15px; background: rgba(245,197,24,0.15); border: 1px solid rgba(245,197,24,0.4); color: var(--gold); font-size: 0.8rem; font-weight: 700; padding: 5px 13px; border-radius: 99px; }
+  .tp-hero h1 { margin: 0; color: #fff; font-weight: 900; font-size: clamp(1.9rem, 4.8vw, 3rem); line-height: 1.12; letter-spacing: -0.015em; max-width: 20ch; }
+  .tp-hero h1 .hl { color: var(--gold); }
+  .tp-hero p { margin: 16px 0 0; max-width: 46ch; color: #e6e7e5; font-size: clamp(1.02rem, 2.2vw, 1.18rem); line-height: 1.6; }
+
+  /* ---------- קלף ה-wizard ---------- */
+  .tp-card { background: var(--paper); border: 1px solid var(--line); border-radius: 22px; box-shadow: 0 24px 60px rgba(26,29,36,0.18); margin-top: -82px; position: relative; z-index: 5; overflow: hidden; }
+  .tp-steps { display: flex; background: var(--graphite); }
+  .tp-step-tab { flex: 1 1 0; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 15px 8px; color: #6e727c; font-size: 0.82rem; font-weight: 700; position: relative; border: 0; background: none; cursor: default; min-width: 0; }
+  .tp-step-tab .n { flex: 0 0 auto; width: 24px; height: 24px; border-radius: 50%; background: #343843; color: #9aa0ab; font-size: 0.78rem; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+  .tp-step-tab .lb { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tp-step-tab.done { color: #c7cad0; cursor: pointer; } .tp-step-tab.done .n { background: var(--good); color: #fff; }
+  .tp-step-tab.active { color: #fff; } .tp-step-tab.active .n { background: var(--gold); color: var(--graphite); }
+  .tp-step-tab.active::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: var(--gold); }
+  @media (max-width: 680px) { .tp-step-tab .lb { display: none; } .tp-step-tab { padding: 14px 4px; } }
+
+  .tp-body { padding: 34px 38px 30px; min-height: 360px; }
+  @media (max-width: 560px) { .tp-body { padding: 26px 18px 22px; } .tp-card { margin-top: -64px; } }
+  .tp-pane { display: none; animation: tpIn .3s ease; }
+  .tp-pane.show { display: block; }
+  @keyframes tpIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .tp-pane { animation: none; } }
+  .tp-q { font-size: 1.5rem; font-weight: 900; color: var(--ink); margin: 0 0 6px; letter-spacing: -0.01em; }
+  .tp-sub { font-size: 1rem; color: var(--ink-soft); margin: 0 0 24px; max-width: 60ch; }
+
+  .tp-chips { display: flex; flex-wrap: wrap; gap: 10px; }
+  .tp-chip { border: 1.5px solid var(--line); background: #fff; color: var(--ink-soft); font-size: 0.96rem; font-weight: 700; padding: 11px 18px; border-radius: 99px; cursor: pointer; transition: all .15s; }
+  .tp-chip:hover { border-color: var(--gold); } .tp-chip.on { background: var(--graphite); border-color: var(--graphite); color: #fff; }
+  /* בורר עונות — ארבע כרטיסיות + גמיש */
+  .tp-seasons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .tp-seasons .tp-chip { padding: 14px 8px; text-align: center; display: flex; flex-direction: column; gap: 3px; line-height: 1.25; }
+  .tp-seasons .tp-chip b { font-size: 1rem; font-weight: 800; }
+  .tp-seasons .tp-chip small { font-size: 0.78rem; color: var(--ink-mute); font-weight: 600; }
+  .tp-seasons .tp-chip.on small { color: #c7cad0; }
+  .tp-seasons .tp-flex { grid-column: 1 / -1; }
+  .tp-seasons .tp-chip.on { background: var(--graphite); border-color: var(--graphite); color: #fff; }
+  @media (max-width: 560px) { .tp-seasons { grid-template-columns: repeat(2, 1fr); } }
+
+  .tp-verdict { margin-top: 20px; border-radius: 14px; overflow: hidden; display: none; border: 1px solid var(--line); }
+  .tp-verdict.show { display: block; }
+  .tp-verdict .row { display: flex; gap: 11px; padding: 14px 17px; align-items: flex-start; }
+  .tp-verdict .row + .row { border-top: 1px solid var(--line); }
+  .tp-verdict .ic { flex: 0 0 auto; width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.82rem; margin-top: 1px; }
+  .tp-verdict .yes .ic { background: #e3f4ea; color: var(--good); } .tp-verdict .no .ic { background: #fbe6e2; color: var(--bad); }
+  .tp-verdict .tx { font-size: 0.95rem; color: var(--ink-soft); line-height: 1.55; } .tp-verdict .tx b { color: var(--ink); }
+
+  .tp-field { margin-bottom: 26px; }
+  .tp-field > label { display: block; font-size: 0.9rem; font-weight: 800; color: var(--ink); margin-bottom: 12px; }
+  .tp-ctl { display: inline-flex; align-items: center; gap: 6px; background: #f3f3ef; border: 1px solid var(--line); border-radius: 14px; padding: 6px; }
+  .tp-ctl button { width: 46px; height: 46px; border: 0; border-radius: 10px; background: #fff; color: var(--ink); font-size: 1.5rem; font-weight: 700; cursor: pointer; line-height: 1; box-shadow: 0 1px 3px rgba(0,0,0,.08); transition: all .15s; }
+  .tp-ctl button:hover { background: var(--gold); }
+  .tp-ctl output { min-width: 92px; text-align: center; font-size: 1.3rem; font-weight: 900; color: var(--ink); }
+  .tp-ctl output small { display: block; font-size: 0.72rem; font-weight: 600; color: var(--ink-mute); }
+  .tp-styleopts { display: flex; flex-wrap: wrap; gap: 10px; }
+  .tp-styleopt { border: 1.5px solid var(--line); background: #fff; border-radius: 13px; padding: 13px 18px; cursor: pointer; transition: all .15s; text-align: center; }
+  .tp-styleopt:hover { border-color: var(--gold); } .tp-styleopt.on { border-color: var(--graphite); background: var(--graphite); color: #fff; }
+  .tp-styleopt b { display: block; font-size: 1rem; font-weight: 800; }
+  .tp-styleopt span { font-size: 0.8rem; color: var(--ink-mute); } .tp-styleopt.on span { color: #9aa0ab; }
+  .tp-budget { margin-top: 20px; padding: 16px 20px; background: var(--graphite); border-radius: 14px; color: #fff; display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 6px; }
+  .tp-budget .lab { font-size: 0.9rem; color: #c3c6cc; } .tp-budget .val { font-size: 1.5rem; font-weight: 900; color: var(--gold); }
+  .tp-budget-note { font-size: 0.82rem; color: var(--ink-mute); margin: 9px 2px 0; }
+  .tp-twocol { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; } @media (max-width: 560px) { .tp-twocol { grid-template-columns: 1fr; gap: 0; } }
+
+  /* גלריית בחירה */
+  .tp-gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  @media (max-width: 720px) { .tp-gallery { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 440px) { .tp-gallery { grid-template-columns: 1fr; } }
+  .tp-pick { position: relative; border: 0; padding: 0; border-radius: 16px; overflow: hidden; cursor: pointer; aspect-ratio: 1 / 1; display: block; text-align: right; background: #ddd; transition: transform .15s; }
+  .tp-pick:hover { transform: translateY(-2px); }
+  .tp-pick .bg { position: absolute; inset: 0; background-size: cover; background-position: center; z-index: 0; transition: transform .3s; } .tp-pick:hover .bg { transform: scale(1.05); }
+  .tp-pick::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(26,29,36,0.92) 0%, rgba(26,29,36,0.35) 55%, rgba(26,29,36,0.1) 100%); z-index: 1; transition: background .15s; }
+  .tp-pick .cap { position: absolute; inset-inline: 0; bottom: 0; z-index: 2; padding: 15px 16px; color: #fff; }
+  .tp-pick .cap b { display: block; font-size: 1.08rem; font-weight: 800; line-height: 1.2; }
+  .tp-pick .cap span { display: block; font-size: 0.8rem; color: #d9dbe0; margin-top: 3px; line-height: 1.4; }
+  .tp-pick .chk { position: absolute; top: 12px; inset-inline-end: 12px; z-index: 3; width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.22); border: 2px solid rgba(255,255,255,0.7); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 0.85rem; transition: all .15s; }
+  .tp-pick.on .chk { background: var(--good); border-color: var(--good); }
+  .tp-pick.on::after { background: linear-gradient(to top, rgba(26,29,36,0.92) 0%, rgba(47,143,91,0.35) 70%, rgba(47,143,91,0.25) 100%); }
+  .tp-pick.on { outline: 3px solid var(--good); outline-offset: -3px; }
+  .tp-gallery-note { margin: 18px 2px 0; font-size: 0.9rem; color: var(--ink-mute); } .tp-gallery-note b { color: var(--ink-soft); }
+  .tp-dest-warn { background: #fdf4f2; border: 1px solid rgba(214,70,51,0.35); color: var(--bad); font-weight: 700; font-size: 0.92rem; padding: 11px 15px; border-radius: 11px; margin: 0 0 16px; }
+  .tp-empty-places { text-align: center; color: var(--ink-mute); padding: 40px 20px; line-height: 1.7; } .tp-empty-places i { font-size: 2rem; color: var(--line); display: block; margin-bottom: 12px; }
+  /* קבוצות חוויות (שלב 5) */
+  .tp-exgroup { margin-bottom: 26px; } .tp-exgroup:last-child { margin-bottom: 8px; }
+  .tp-exgroup-h { font-size: 1.08rem; font-weight: 800; color: var(--ink); margin: 0 0 14px; display: flex; align-items: center; gap: 9px; }
+  .tp-exgroup-h i { color: var(--gold-deep); font-size: 0.98rem; }
+  .tp-exgroup-n { color: var(--ink-mute); font-weight: 600; font-size: 0.85rem; }
+  /* גלריה צפופה — אריחים קטנים יותר, יותר בשורה */
+  .tp-gallery.dense { grid-template-columns: repeat(auto-fill, minmax(146px, 1fr)); gap: 11px; }
+  .tp-gallery.dense .tp-pick-wrap { aspect-ratio: 1 / 1.08; }
+  .tp-gallery.dense .tp-pick-wrap .tp-pick { aspect-ratio: auto; width: 100%; height: 100%; }
+  .tp-gallery.dense .tp-pick .cap { padding: 11px 12px; }
+  .tp-gallery.dense .tp-pick .cap b { font-size: 0.92rem; }
+  .tp-gallery.dense .tp-pick .cap span { font-size: 0.72rem; margin-top: 2px; }
+  .tp-gallery.dense .tp-pick .chk { width: 26px; height: 26px; top: 9px; inset-inline-end: 9px; font-size: 0.72rem; }
+  @media (max-width: 440px) { .tp-gallery.dense { grid-template-columns: repeat(2, 1fr); } }
+  /* עטיפת אריח עם קישור אתר */
+  .tp-pick-wrap { position: relative; display: block; }
+  .tp-pick-site { position: absolute; top: 9px; inset-inline-start: 9px; z-index: 4; width: 26px; height: 26px; border-radius: 7px; background: rgba(0,0,0,0.5); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 0.72rem; transition: background .15s; }
+  .tp-pick-site:hover { background: var(--gold-deep); }
+
+  /* ---------- שלב 5: מסלול מפורט ---------- */
+  .tp-plan-summary { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; }
+  .tp-pill { display: inline-flex; align-items: center; gap: 7px; background: #f3f3ef; border: 1px solid var(--line); border-radius: 99px; padding: 8px 15px; font-size: 0.9rem; font-weight: 700; color: var(--ink-soft); }
+  .tp-pill i { color: var(--gold-deep); } .tp-pill b { color: var(--ink); }
+  .tp-plan-tools { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+  .tp-tool { display: inline-flex; align-items: center; gap: 8px; background: #fff; border: 1.5px solid var(--line); color: var(--ink-soft); font-weight: 700; font-size: 0.86rem; padding: 9px 15px; border-radius: 99px; cursor: pointer; transition: all .15s; }
+  .tp-tool:hover { border-color: var(--gold); }
+  .tp-tool.gold { background: rgba(245,197,24,0.14); border-color: rgba(245,197,24,0.45); color: var(--gold-deep); }
+  .tp-plan-tools { justify-content: space-between; }
+  .tp-viewtoggle { display: inline-flex; background: #f3f3ef; border: 1px solid var(--line); border-radius: 11px; padding: 4px; gap: 4px; }
+  .tp-viewtoggle button { border: 0; background: none; font-family: inherit; font-weight: 800; font-size: 0.85rem; color: var(--ink-soft); padding: 8px 15px; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; }
+  .tp-viewtoggle button.on { background: var(--graphite); color: #fff; }
+  /* טבלת מסלול — ימים כשורות (אופציה 2) */
+  .tp-tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 14px; background: var(--paper); margin-bottom: 8px; }
+  .tp-table { width: 100%; min-width: 620px; border-collapse: collapse; font-size: 0.85rem; }
+  .tp-table th, .tp-table td { border: 1px solid var(--line); padding: 10px 12px; text-align: right; vertical-align: top; }
+  .tp-table thead th { background: var(--graphite); color: #fff; font-weight: 800; text-align: center; position: sticky; top: 0; }
+  .tp-table tbody th { background: #f3f3ef; color: var(--ink); font-weight: 800; white-space: nowrap; width: 58px; text-align: center; }
+  .tp-table tbody th small { display: block; font-size: 0.68rem; color: var(--ink-mute); font-weight: 600; margin-top: 2px; }
+  .tp-table td .slot { margin-bottom: 7px; } .tp-table td .slot:last-child { margin-bottom: 0; }
+  .tp-table td .slot b { color: var(--ink); font-weight: 700; } .tp-table td .slot small { color: var(--ink-mute); display: block; font-size: 0.72rem; }
+  .tp-table .cost-col { color: var(--gold-deep); font-weight: 800; white-space: nowrap; text-align: center; }
+  .tp-table tr.total-row th, .tp-table tr.total-row td { background: var(--graphite); color: #fff; font-weight: 800; }
+  .tp-table tr.total-row .cost-col { color: var(--gold); font-size: 1rem; }
+
+  .tp-day { background: var(--paper); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; margin-bottom: 15px; }
+  .tp-day-hd { display: flex; align-items: center; gap: 13px; padding: 14px 17px; background: var(--graphite); }
+  .tp-day-num { flex: 0 0 auto; width: 40px; height: 40px; border-radius: 11px; background: var(--gold); color: var(--graphite); font-weight: 900; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; }
+  .tp-day-ct { flex: 1 1 auto; min-width: 0; } .tp-day-ct b { display: block; font-size: 1.08rem; font-weight: 800; color: #fff; line-height: 1.2; } .tp-day-ct span { font-size: 0.8rem; color: #9aa0ab; }
+  .tp-day-cost { flex: 0 0 auto; text-align: left; } .tp-day-cost b { display: block; color: var(--gold); font-weight: 900; font-size: 1.02rem; } .tp-day-cost span { font-size: 0.68rem; color: #9aa0ab; }
+
+  .tp-rows { padding: 8px 0; }
+  .tp-row { display: flex; align-items: flex-start; gap: 12px; padding: 11px 17px; border-bottom: 1px solid var(--line); }
+  .tp-row:last-child { border-bottom: 0; }
+  .tp-row .tag { flex: 0 0 auto; width: 74px; font-size: 0.74rem; font-weight: 800; color: var(--gold-deep); padding-top: 3px; }
+  .tp-row .body { flex: 1 1 auto; min-width: 0; }
+  .tp-row .body b { font-size: 0.98rem; font-weight: 700; color: var(--ink); }
+  .tp-row .body .note { display: block; font-size: 0.84rem; color: var(--ink-mute); line-height: 1.5; margin-top: 2px; }
+  .tp-row .body .map { color: var(--gold-deep); font-weight: 700; font-size: 0.78rem; margin-top: 3px; display: inline-block; }
+  .tp-row .cost { flex: 0 0 auto; font-size: 0.82rem; font-weight: 800; color: var(--ink-soft); white-space: nowrap; padding-top: 3px; }
+  .tp-row .del { flex: 0 0 auto; border: 0; background: none; color: var(--ink-mute); cursor: pointer; font-size: 0.8rem; padding: 3px; opacity: .5; }
+  .tp-row:hover .del { opacity: 1; } .tp-row .del:hover { color: var(--bad); }
+  .tp-row.logi .tag { color: var(--ink-mute); } .tp-row.logi .body b { font-weight: 600; color: var(--ink-soft); }
+  .tp-add-row { display: flex; align-items: center; gap: 8px; width: 100%; padding: 12px 17px; border: 0; background: #fafaf8; color: var(--gold-deep); font-weight: 700; font-size: 0.86rem; cursor: pointer; border-top: 1px dashed var(--line); }
+  .tp-add-row:hover { background: #fffdf4; }
+
+  /* תקציב מסכם */
+  .tp-totals { background: var(--graphite); border-radius: 16px; padding: 22px 24px; margin: 22px 0 8px; color: #fff; }
+  .tp-totals h3 { margin: 0 0 16px; font-size: 1.1rem; font-weight: 800; display: flex; align-items: center; gap: 9px; } .tp-totals h3 i { color: var(--gold); }
+  .tp-totals-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px 22px; margin-bottom: 16px; }
+  @media (max-width: 480px) { .tp-totals-grid { grid-template-columns: 1fr; } }
+  .tp-tline { display: flex; justify-content: space-between; align-items: baseline; padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.08); font-size: 0.92rem; color: #c7cad0; }
+  .tp-tline b { color: #fff; font-weight: 700; }
+  .tp-tfinal { display: flex; justify-content: space-between; align-items: baseline; padding-top: 14px; border-top: 2px solid rgba(255,255,255,0.15); }
+  .tp-tfinal .l { font-size: 1rem; font-weight: 700; color: #c7cad0; } .tp-tfinal .v { font-size: 1.7rem; font-weight: 900; color: var(--gold); }
+  .tp-tper { text-align: left; margin-top: 6px; font-size: 0.92rem; color: #9aa0ab; } .tp-tper b { color: #fff; }
+
+  /* צ׳קליסט לא לשכוח */
+  .tp-notforget { background: var(--paper); border: 1px solid var(--line); border-radius: 16px; padding: 22px 24px; margin: 18px 0; }
+  .tp-notforget h3 { margin: 0 0 14px; font-size: 1.1rem; font-weight: 800; color: var(--ink); display: flex; align-items: center; gap: 9px; } .tp-notforget h3 i { color: var(--gold-deep); }
+  .tp-nf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 26px; } @media (max-width: 560px) { .tp-nf-grid { grid-template-columns: 1fr; } }
+  .tp-chk { display: flex; align-items: center; gap: 11px; padding: 9px 0; cursor: pointer; color: var(--ink-soft); font-size: 0.93rem; border-bottom: 1px solid var(--line); }
+  .tp-chk:last-child { border-bottom: 0; }
+  .tp-chk .box { flex: 0 0 auto; width: 22px; height: 22px; border-radius: 6px; border: 1.5px solid var(--ink-mute); display: inline-flex; align-items: center; justify-content: center; color: transparent; font-size: 0.68rem; transition: all .15s; }
+  .tp-chk.on .box { background: var(--good); border-color: var(--good); color: #fff; } .tp-chk.on span:last-child { color: var(--ink-mute); text-decoration: line-through; }
+
+  /* מודל הוספת שורה */
+  .tp-modal { position: fixed; inset: 0; z-index: 3000; display: none; }
+  .tp-modal.open { display: block; }
+  .tp-modal-bg { position: absolute; inset: 0; background: rgba(20,22,28,0.6); }
+  .tp-modal-sheet { position: absolute; inset-block-end: 0; inset-inline: 0; margin-inline: auto; max-width: 520px; background: var(--bg); border-radius: 22px 22px 0 0; max-height: 84vh; display: flex; flex-direction: column; animation: tpUp .3s ease; }
+  @keyframes tpUp { from { transform: translateY(100%); } to { transform: none; } } @media (prefers-reduced-motion: reduce) { .tp-modal-sheet { animation: none; } }
+  .tp-modal-hd { padding: 18px 20px; border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 10px; }
+  .tp-modal-hd b { flex: 1 1 auto; font-size: 1.1rem; font-weight: 900; color: var(--ink); }
+  .tp-modal-x { border: 0; background: #e6e6e2; color: var(--ink); width: 34px; height: 34px; border-radius: 50%; cursor: pointer; }
+  .tp-modal-bd { flex: 1 1 auto; overflow-y: auto; padding: 14px 20px 22px; }
+  .tp-opt { display: flex; align-items: center; gap: 12px; background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; margin-bottom: 9px; cursor: pointer; transition: all .15s; }
+  .tp-opt:hover { border-color: var(--gold); }
+  .tp-opt .oi { flex: 0 0 auto; width: 38px; height: 38px; border-radius: 10px; background: #f3f3ef; color: var(--ink); display: flex; align-items: center; justify-content: center; }
+  .tp-opt .ot { flex: 1 1 auto; } .tp-opt .ot b { display: block; font-size: 0.96rem; font-weight: 700; color: var(--ink); } .tp-opt .ot span { font-size: 0.8rem; color: var(--ink-mute); }
+  .tp-opt .oc { flex: 0 0 auto; font-size: 0.82rem; font-weight: 800; color: var(--gold-deep); }
+
+  /* ניווט */
+  .tp-nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 20px 38px 26px; border-top: 1px solid var(--line); background: #fafaf8; }
+  @media (max-width: 560px) { .tp-nav { padding: 16px 18px 20px; } }
+  .tp-back { background: none; border: 0; color: var(--ink-soft); font-weight: 700; font-size: 0.95rem; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; padding: 10px; }
+  .tp-back:hover { color: var(--ink); } .tp-back.hide { visibility: hidden; }
+  .tp-next { background: var(--graphite); color: #fff; border: 0; border-radius: 13px; font-weight: 800; font-size: 1.02rem; padding: 14px 30px; cursor: pointer; display: inline-flex; align-items: center; gap: 9px; transition: all .15s; }
+  .tp-next:hover { background: #000; } .tp-next .fa-arrow-left { color: var(--gold); }
+  .tp-share { background: #25d366 !important; } .tp-share:hover { filter: brightness(1.05); } .tp-share i { color: #fff !important; }
+
+  /* מידע עזר */
+  .tp-ref { padding: 46px 0 20px; }
+  .tp-ref-h { font-size: 1.3rem; font-weight: 900; color: var(--ink); margin: 0 0 6px; } .tp-ref-s { font-size: 0.95rem; color: var(--ink-soft); margin: 0 0 20px; }
+  .tp-acc { border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: var(--paper); margin-bottom: 11px; }
+  .tp-acc-hd { display: flex; align-items: center; gap: 13px; padding: 16px 18px; cursor: pointer; width: 100%; border: 0; background: none; text-align: right; font-family: inherit; }
+  .tp-acc-hd .ic { flex: 0 0 auto; width: 38px; height: 38px; border-radius: 10px; background: #f3f3ef; color: var(--ink); display: flex; align-items: center; justify-content: center; font-size: 1rem; }
+  .tp-acc-hd b { flex: 1 1 auto; font-size: 1.02rem; font-weight: 800; color: var(--ink); }
+  .tp-acc-hd .ar { flex: 0 0 auto; color: var(--ink-mute); transition: transform .2s; } .tp-acc.open .tp-acc-hd .ar { transform: rotate(180deg); }
+  .tp-acc-bd { display: none; padding: 0 18px 18px; color: var(--ink-soft); font-size: 0.96rem; line-height: 1.7; } .tp-acc.open .tp-acc-bd { display: block; }
+  .tp-acc-bd p { margin: 0 0 11px; } .tp-acc-bd p:last-child { margin: 0; } .tp-acc-bd b { color: var(--ink); } .tp-acc-bd a { color: var(--gold-deep); font-weight: 700; }
+  .tp-acc-bd ul { list-style: none; padding: 0; margin: 10px 0; } .tp-acc-bd li { position: relative; padding-inline-start: 24px; margin-bottom: 9px; }
+  .tp-acc-bd li::before { content: '\f00c'; font-family: 'Font Awesome 6 Free'; font-weight: 900; position: absolute; inset-inline-start: 0; top: 4px; color: var(--good); font-size: 0.72rem; }
+
+  .tp-foot { background: var(--graphite-2); color: #8a8e97; padding: 26px 0 36px; text-align: center; font-size: 0.86rem; margin-top: 30px; } .tp-foot b { color: #fff; }
+  .tp-foot-src { margin-top: 8px; font-size: 0.8rem; line-height: 1.9; } .tp-foot-src a { color: #8a8e97; text-decoration: underline; }
+  @media (prefers-reduced-motion: reduce) { .tp *, .tp { transition: none !important; scroll-behavior: auto !important; } }
+</style>
+
+<div class="tp">
+  <header class="tp-hero">
+    <div class="tp-wrap">
+      <img class="tp-hero-logo" src="https://tasim-lehul.com/wp-content/uploads/2026/04/טסים-לחול-טמפלייטים-5.png" alt="טסים לחו״ל" onerror="this.style.display='none'">
+      <span class="tp-hero-tag"><i class="fas fa-wand-magic-sparkles"></i> מתכנן הטיולים שלנו</span>
+      <h1>בואו נבנה לכם את הטיול <span class="hl">המושלם לברזיל.</span></h1>
+      <p>חמישה שלבים קצרים — ותצאו עם מסלול יום-יום מפורט, כולל תקציב וצ׳קליסט, מוכן לשיתוף בוואטסאפ.</p>
+    </div>
+  </header>
+
+  <div class="tp-contentbg">
+  <div class="tp-wrap">
+    <div class="tp-card">
+      <div class="tp-steps" id="tpSteps">
+        <button class="tp-step-tab active" data-go="1"><span class="n">1</span><span class="lb">מתי</span></button>
+        <button class="tp-step-tab" data-go="2"><span class="n">2</span><span class="lb">ימים וסגנון</span></button>
+        <button class="tp-step-tab" data-go="3"><span class="n">3</span><span class="lb">מה בא לכם</span></button>
+        <button class="tp-step-tab" data-go="4"><span class="n">4</span><span class="lb">יעדים</span></button>
+        <button class="tp-step-tab" data-go="5"><span class="n">5</span><span class="lb">חוויות</span></button>
+        <button class="tp-step-tab" data-go="6"><span class="n">6</span><span class="lb">המסלול</span></button>
+      </div>
+
+      <div class="tp-body" id="tpBody">
+        <!-- שלב 1 -->
+        <section class="tp-pane show" data-pane="1">
+          <h2 class="tp-q">מתי בא לכם לטוס?</h2>
+          <p class="tp-sub">זו ההחלטה שמשפיעה על הכל — בברזיל העונות הפוכות משלנו, ואין בה ״עונה טובה״ אחת לכל המדינה. בחרו את העונה שבה תטוסו, ונראה לכם ישר מה מתאים. עוד לא סגרתם? בחרו ״גמיש״.</p>
+          <div class="tp-chips tp-seasons" id="tpWhen">
+            <button class="tp-chip" data-se="summer" type="button"><b>קיץ ברזילאי</b><small>ינואר–מרץ</small></button>
+            <button class="tp-chip" data-se="autumn" type="button"><b>סתיו</b><small>אפריל–יוני</small></button>
+            <button class="tp-chip" data-se="winter" type="button"><b>חורף יבש</b><small>יולי–ספטמבר</small></button>
+            <button class="tp-chip" data-se="spring" type="button"><b>אביב</b><small>אוקטובר–דצמבר</small></button>
+            <button class="tp-chip tp-flex" data-se="flex" type="button">גמיש / עוד לא יודע</button>
+          </div>
+          <div class="tp-verdict" id="tpVerdict">
+            <div class="row yes"><span class="ic"><i class="fas fa-check"></i></span><span class="tx" id="tpVYes"></span></div>
+            <div class="row no"><span class="ic"><i class="fas fa-xmark"></i></span><span class="tx" id="tpVNo"></span></div>
+          </div>
+        </section>
+
+        <!-- שלב 2 -->
+        <section class="tp-pane" data-pane="2">
+          <h2 class="tp-q">כמה זמן, ובאיזה סגנון?</h2>
+          <p class="tp-sub">מספר הימים ומספר המטיילים יקבעו את המסלול והתקציב. אפשר לשנות אחר כך.</p>
+          <div class="tp-twocol">
+            <div class="tp-field">
+              <label>כמה ימים בברזיל?</label>
+              <div class="tp-ctl"><button type="button" id="tpDayPlus">+</button><output id="tpDaysOut">14<small>ימים</small></output><button type="button" id="tpDayMinus">−</button></div>
+            </div>
+            <div class="tp-field">
+              <label>כמה מטיילים?</label>
+              <div class="tp-ctl"><button type="button" id="tpPaxPlus">+</button><output id="tpPaxOut">2<small>אנשים</small></output><button type="button" id="tpPaxMinus">−</button></div>
+            </div>
+          </div>
+          <div class="tp-field">
+            <label>איזה סגנון טיול?</label>
+            <div class="tp-styleopts" id="tpStyle">
+              <button class="tp-styleopt" data-lo="125" data-hi="185" data-k="backpack" type="button"><b>תרמילאי</b><span>אכסניות, אוכל רחוב</span></button>
+              <button class="tp-styleopt on" data-lo="275" data-hi="460" data-k="mid" type="button"><b>ביניים</b><span>מלונות 3★, מסעדות</span></button>
+              <button class="tp-styleopt" data-lo="610" data-hi="1070" data-k="luxe" type="button"><b>מפנק</b><span>4-5★, חוויות פרימיום</span></button>
+            </div>
+          </div>
+          <div class="tp-budget"><span class="lab">הערכת תקציב ראשונית לאדם, בלי הטיסה</span><span class="val" id="tpBudgetVal">—</span></div>
+          <p class="tp-budget-note">בהמשך תקבלו תקציב מדויק ומפורט לכל יום. הטיסה בנפרד: כ-3,000-5,000 ₪ הלוך-חזור בעונת ביניים.</p>
+        </section>
+
+        <!-- שלב 3 -->
+        <section class="tp-pane" data-pane="3">
+          <h2 class="tp-q">מה הכי בא לכם לחוות?</h2>
+          <p class="tp-sub">בחרו כל מה שמושך אתכם — לפי זה נציע לכם את היעדים המתאימים בשלב הבא, עם מסלול מלא לכל אחד.</p>
+          <div class="tp-gallery" id="tpExp"></div>
+          <p class="tp-gallery-note">בחרתם <b id="tpExpCount">0</b> חוויות.</p>
+        </section>
+
+        <!-- שלב 4 -->
+        <section class="tp-pane" data-pane="4">
+          <h2 class="tp-q">אילו יעדים נכניס למסלול?</h2>
+          <p class="tp-sub">על בסיס מה שבחרתם, אלה היעדים המתאימים. סמנו את מי שנכנס — לכל יעד שתבחרו ייבנה מסלול יומי מפורט.</p>
+          <div id="tpDestWrap"></div>
+        </section>
+
+        <!-- שלב 5 — חוויות, מאכלים ואסור לפספס -->
+        <section class="tp-pane" data-pane="5">
+          <h2 class="tp-q">מה אסור לכם לפספס?</h2>
+          <p class="tp-sub">על בסיס היעדים שבחרתם — אלה הדברים שחייבים לחוות, המאכלים לטעום והחוויות המיוחדות. סמנו מה שמדבר אליכם, והם ישובצו למסלול.</p>
+          <div id="tpExtrasWrap"></div>
+        </section>
+
+        <!-- שלב 6 -->
+        <section class="tp-pane" data-pane="6">
+          <h2 class="tp-q">המסלול המפורט שלכם 🎉</h2>
+          <p class="tp-sub">הנה הטיול שלכם, יום אחרי יום, שעה אחרי שעה. הסירו שורות שלא מתאימות, הוסיפו משלכם, וסמנו את ההכנות. הכל מוכן לשיתוף.</p>
+          <div class="tp-plan-summary" id="tpSummary"></div>
+          <div class="tp-plan-tools">
+            <div class="tp-viewtoggle" id="tpViewToggle">
+              <button class="on" data-view="cards" type="button"><i class="fas fa-layer-group"></i> כרטיסים</button>
+              <button data-view="table" type="button"><i class="fas fa-table"></i> טבלה</button>
+            </div>
+            <button class="tp-tool gold" id="tpRebuild" type="button"><i class="fas fa-wand-magic-sparkles"></i> בנו לי מסלול מחדש</button>
+          </div>
+          <div id="tpDayBoard"></div>
+          <div id="tpTableWrap" class="tp-tablewrap" style="display:none"></div>
+          <div class="tp-totals" id="tpTotals"></div>
+          <div class="tp-notforget">
+            <h3><i class="fas fa-clipboard-list"></i> לא לשכוח — צ׳קליסט הכנה</h3>
+            <div class="tp-nf-grid" id="tpNotForget"></div>
+          </div>
+        </section>
+      </div>
+
+      <div class="tp-nav">
+        <button class="tp-back hide" id="tpBack" type="button"><i class="fas fa-arrow-right"></i> חזרה</button>
+        <button class="tp-next" id="tpNext" type="button">הבא <i class="fas fa-arrow-left"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="tp-wrap">
+    <div class="tp-ref">
+      <h2 class="tp-ref-h">כל מה שעוד כדאי לדעת לפני ברזיל</h2>
+      <p class="tp-ref-s">המידע הפרקטי שמלווה את התכנון — פתחו מה שרלוונטי לכם.</p>
+      <div id="tpAcc"></div>
+    </div>
+  </div>
+  </div><!-- /.tp-contentbg -->
+
+  <footer class="tp-foot">
+    <div class="tp-wrap">
+      <p><b>טסים לחו״ל</b> · מתכנן טיולים · עודכן אוקטובר 2026</p>
+      <div class="tp-foot-src">מקורות: PAHO ו-NaTHNaC · <a href="https://travel.state.gov/content/travel/en/international-travel/International-Travel-Country-Information-Pages/Brazil.html" rel="nofollow noopener" target="_blank">US State Dept</a> · <a href="https://www.hebcal.com/holidays/2026-2027" rel="nofollow noopener" target="_blank">Hebcal</a></div>
+    </div>
+  </footer>
+
+  <!-- מודל הוספת שורה -->
+  <div class="tp-modal" id="tpModal">
+    <div class="tp-modal-bg" data-mclose></div>
+    <div class="tp-modal-sheet">
+      <div class="tp-modal-hd"><b>הוסיפו פעילות ליום</b><button class="tp-modal-x" data-mclose type="button"><i class="fas fa-xmark"></i></button></div>
+      <div class="tp-modal-bd" id="tpModalBd"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  // המתנה לטעינת ה-DOM — חשוב בוורדפרס, שם הסקריפט עלול לרוץ לפני שהאלמנטים קיימים
+  function boot() {
+  var IMG = {
+    cristo: 'https://images.unsplash.com/photo-1483729558449-99ef09a8c325?q=80&w=600&auto=format&fit=crop',
+    sugarloaf: 'https://images.unsplash.com/photo-1516834474-48c0abc2a902?q=80&w=600&auto=format&fit=crop',
+    iguacu: 'https://images.unsplash.com/photo-1554168848-228452c09d60?q=80&w=600&auto=format&fit=crop',
+    pantanal: 'https://images.unsplash.com/photo-1619546952812-520e98064a52?q=80&w=600&auto=format&fit=crop',
+    beach: 'https://images.unsplash.com/photo-1531425300797-d5dc8b021c84?q=80&w=600&auto=format&fit=crop',
+    salvador: 'https://images.unsplash.com/photo-1589657862545-9c5f2d9d1e3f?q=80&w=600&auto=format&fit=crop',
+    nightlife: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?q=80&w=600&auto=format&fit=crop',
+    food: 'https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=600&auto=format&fit=crop',
+    jeri: 'https://images.unsplash.com/photo-1518509562904-e7ef99cddc28?q=80&w=600&auto=format&fit=crop',
+    saopaulo: 'https://images.unsplash.com/photo-1543059080-f9b1272213d5?q=80&w=600&auto=format&fit=crop',
+    floripa: 'https://images.unsplash.com/photo-1619546952812-520e98064a52?q=80&w=600&auto=format&fit=crop',
+    buzios: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=600&auto=format&fit=crop',
+    chapada: 'https://images.unsplash.com/photo-1533587851505-d119e13fa0d7?q=80&w=600&auto=format&fit=crop'
+  };
+
+  // ====== חוויות (שלב 3) → תגיות יעדים ======
+  var EXPERIENCES = [
+    { id: 'beaches', t: 'חופים ושמש', s: 'קופקבנה, חופי הצפון', img: IMG.beach, tags: ['beach'] },
+    { id: 'city', t: 'עיר וחיי תרבות', s: 'ריו, תצפיות, שכונות', img: IMG.cristo, tags: ['city'] },
+    { id: 'nature', t: 'טבע פראי', s: 'יגוארים, מפלים', img: IMG.pantanal, tags: ['nature'] },
+    { id: 'nightlife', t: 'חיי לילה', s: 'סמבה, ברים, מסיבות', img: IMG.nightlife, tags: ['nightlife'] },
+    { id: 'food', t: 'אוכל וטעימות', s: 'שחרסקו, שווקים', img: IMG.food, tags: ['food'] },
+    { id: 'icon', t: 'האייקונים', s: 'ישו, איגואסו', img: IMG.iguacu, tags: ['icon'] }
+  ];
+
+  // ====== יעדים (שלב 4) — כל יעד עם תבנית יום מפורטת ======
+  // r: שורות יום. type: act=פעילות, meal=אוכל, logi=לוגיסטיקה. cost: דולר לאדם (אם רלוונטי). hotel: עלות לילה לאדם לפי סגנון.
+  // dayTemplates: מערך של ימים; כל יום = {title, rows:[]}. אם ביעד יש פחות ימים מהמוקצב, הימים העודפים = "יום חופשי" מהמאגר.
+  var TAG = { morning: 'בוקר', noon: 'צהריים', eve: 'ערב', move: 'מעבר', stay: 'לינה' };
+  var DEST = {
+    rio: {
+      t: 'ריו דה ז׳ניירו', s: 'ישו הגואל, חופים וחיי עיר', img: IMG.cristo, tags: ['city', 'beach', 'nightlife', 'icon'],
+      hotel: { backpack: 35, mid: 75, luxe: 180 }, minDays: 3, idealDays: 4, maxDays: 5,
+      days: [
+        { title: 'ריו — האייקונים', rows: [
+          { tag: 'morning', type: 'act', t: 'ישו הגואל (קורקובדו)', note: 'לעלות מוקדם בבוקר — אחה״צ מתכסה בעננים. כרטיס מראש.', map: 'Cristo+Redentor+Rio', cost: 25 },
+          { tag: 'noon', type: 'meal', t: 'צהריים — מסעדת ״por quilo״', note: 'ממלאים צלחת ומשלמים לפי משקל. זול וטרי.', cost: 12 },
+          { tag: 'eve', type: 'act', t: 'הר הסוכר (פאו דה אסוקאר)', note: 'רכבל לשקיעה, כשהעיר נדלקת באורות.', map: 'Pão+de+Açúcar+Rio', cost: 30 },
+          { tag: 'eve', type: 'meal', t: 'ערב — שחרסקו ב-Fogo de Chão', note: 'בשר בלי הגבלה. חגיגה.', map: 'Fogo+de+Chão+Rio+de+Janeiro', cost: 40 }
+        ]},
+        { title: 'ריו — חופים ושכונות', rows: [
+          { tag: 'morning', type: 'act', t: 'חוף איפנמה וקופקבנה', note: 'כיסא, מטרייה וקאיפיריניה מול הים.', map: 'Praia+de+Ipanema', cost: 10 },
+          { tag: 'noon', type: 'act', t: 'מדרגות סלרון (Escadaria Selarón)', note: '215 מדרגות פסיפס צבעוני. חינם, ליד לאפה.', map: 'Escadaria+Selarón', cost: 0 },
+          { tag: 'eve', type: 'act', t: 'שקיעה מסלע ארפואדור', note: 'המקומיים מוחאים כפיים לשקיעה. חינם.', map: 'Arpoador', cost: 0 },
+          { tag: 'eve', type: 'meal', t: 'ערב בלאפה', note: 'סמבה חיה וברים ברחוב. ללכת בחבורה.', map: 'Lapa+Rio', cost: 25 }
+        ]},
+        { title: 'ריו — טבע עירוני', rows: [
+          { tag: 'morning', type: 'act', t: 'הגן הבוטני וטיחוקה', note: 'יער גשם בלב העיר, קופים וטוקנים.', map: 'Jardim+Botânico+Rio', cost: 8 },
+          { tag: 'noon', type: 'meal', t: 'צהריים בשכונת סנטה תרזה', note: 'שכונת אמנים ציורית על גבעה.', map: 'Santa+Teresa+Rio', cost: 15 },
+          { tag: 'eve', type: 'act', t: 'שקיעה ב-Mirante Dona Marta', note: 'התצפית הכי יפה על ריו וישו.', map: 'Mirante+Dona+Marta', cost: 0 }
+        ]},
+        { title: 'ריו — יום חופשי / חוף', rows: [
+          { tag: 'morning', type: 'act', t: 'יום חוף רגוע', note: 'לבלון או פראיינייה — חופים שקטים יותר.', map: 'Praia+do+Leblon', cost: 10 },
+          { tag: 'noon', type: 'act', t: 'שייט במפרץ גואנברה (אופציונלי)', note: 'מהמים רואים את ריו אחרת.', cost: 35 },
+          { tag: 'eve', type: 'meal', t: 'ערב אחרון בריו', note: 'בר על הגג בסנטה תרזה או קופקבנה.', cost: 25 }
+        ]}
+      ],
+      extras: [
+        { t: 'מוזיאון המחר (Museu do Amanhã)', note: 'אדריכלות עתידנית בנמל המשופץ.', map: 'Museu+do+Amanhã', cost: 8, tag: 'noon', type: 'act' },
+        { t: 'משחק כדורגל במראקנה', note: 'חוויה ברזילאית אמיתית, אם יש משחק.', map: 'Maracanã', cost: 20, tag: 'eve', type: 'act' },
+        { t: 'טיול מודרך בפאבלה', note: 'רק עם מדריך מוסמך ומוכר.', cost: 30, tag: 'morning', type: 'act' }
+      ]
+    },
+    iguacu: {
+      t: 'מפלי איגואסו', s: '275 מפלים, שני צדדים', img: IMG.iguacu, tags: ['nature', 'icon'],
+      hotel: { backpack: 30, mid: 70, luxe: 160 }, minDays: 2, idealDays: 2, maxDays: 3,
+      days: [
+        { title: 'איגואסו — הצד הברזילאי', rows: [
+          { tag: 'move', type: 'logi', t: 'טיסה פנימית לפוז דו איגואסו (IGU)', note: 'כ-2 שעות מריו. להזמין מראש.', cost: 90 },
+          { tag: 'noon', type: 'act', t: 'הפארק הברזילאי — הפנורמה', note: 'מסלול של כ-1.5 שעות, המבט הרחב על כל המפלים.', map: 'Cataratas+do+Iguaçu+Brasil', cost: 22 },
+          { tag: 'eve', type: 'act', t: 'שקיעה ב-Parque das Aves (אופציונלי)', note: 'מקלט ציפורים צמוד לפארק, טוקנים מקרוב.', map: 'Parque+das+Aves', cost: 15 },
+          { tag: 'eve', type: 'meal', t: 'ערב בפוז דו איגואסו', note: 'מסעדה בעיר. להישאר באזור המפלים — לא לחצות לפרגוואי.', cost: 20 }
+        ]},
+        { title: 'איגואסו — הצד הארגנטינאי', rows: [
+          { tag: 'morning', type: 'logi', t: 'מעבר לצד הארגנטינאי', note: 'חציית גבול, להביא דרכון. יום שלם.', cost: 10 },
+          { tag: 'morning', type: 'act', t: '״גרון השטן״ (Garganta del Diablo)', note: 'הרכבת לתצפית, המפל העוצמתי ביותר — ממש מעליו.', map: 'Garganta+del+Diablo+Iguazu', cost: 25 },
+          { tag: 'noon', type: 'act', t: 'מסלולי Circuito Superior ו-Inferior', note: 'שבילים קרובים למים, אפשר להירטב.', cost: 0 },
+          { tag: 'eve', type: 'meal', t: 'ערב חזרה בברזיל', cost: 18 }
+        ]}
+      ],
+      extras: [
+        { t: 'שייט Macuco Safari אל תוך המפלים', note: 'סירה שנכנסת ממש מתחת למפל. נרטבים לגמרי.', map: 'Macuco+Safari', cost: 55, tag: 'noon', type: 'act' },
+        { t: 'סכר Itaipu', note: 'אחד הסכרים הגדולים בעולם, סיור מודרך.', map: 'Itaipu+Dam', cost: 20, tag: 'morning', type: 'act' }
+      ]
+    },
+    salvador: {
+      t: 'סלבדור והצפון', s: 'תרבות אפרו-ברזילאית וחופים', img: IMG.salvador, tags: ['city', 'beach', 'food', 'nightlife'],
+      hotel: { backpack: 25, mid: 60, luxe: 140 }, minDays: 3, idealDays: 4, maxDays: 6,
+      days: [
+        { title: 'סלבדור — העיר העתיקה', rows: [
+          { tag: 'move', type: 'logi', t: 'טיסה פנימית לסלבדור (SSA)', note: 'כ-2 שעות. להזמין מראש.', cost: 70 },
+          { tag: 'noon', type: 'act', t: 'פלורינפוליס (Pelourinho)', note: 'המרכז ההיסטורי הצבעוני, אתר מורשת עולמית. יפה ביום, בחבורה בלילה.', map: 'Pelourinho+Salvador', cost: 0 },
+          { tag: 'eve', type: 'act', t: 'מופע קפואירה', note: 'אמנות הלחימה-ריקוד שנולדה כאן.', cost: 15 },
+          { tag: 'eve', type: 'meal', t: 'ערב — מוקקה (Moqueca)', note: 'תבשיל דגים בחלב קוקוס, המנה של באהיה.', cost: 18 }
+        ]},
+        { title: 'סלבדור — חופים ותרבות', rows: [
+          { tag: 'morning', type: 'act', t: 'מגדלור בארה (Farol da Barra)', note: 'מגדלור על החוף, מוזיאון ימי ושקיעות.', map: 'Farol+da+Barra+Salvador', cost: 5 },
+          { tag: 'noon', type: 'act', t: 'מעלית לסרטה (Elevador Lacerda)', note: 'מחברת את העיר העליונה לתחתונה מ-1873.', map: 'Elevador+Lacerda', cost: 1 },
+          { tag: 'eve', type: 'act', t: 'כנסיית בונפים (Igreja do Bonfim)', note: 'סרטי משאלות צבעוניים, סמל של סלבדור.', map: 'Igreja+do+Bonfim', cost: 0 },
+          { tag: 'eve', type: 'meal', t: 'אקרז׳ה (Acarajé) ברחוב', note: 'כדורי שעועית מטוגנים, אוכל רחוב מקומי.', cost: 6 }
+        ]},
+        { title: 'סלבדור — חוף וים', rows: [
+          { tag: 'morning', type: 'act', t: 'חופי פורטה דה בארה', note: 'מים רגועים, מושלם לרחצה ושנורקל.', map: 'Porto+da+Barra+Beach', cost: 8 },
+          { tag: 'noon', type: 'act', t: 'שוק מרקאדו מודלו', note: 'אומנות וזכרונות מקומיים.', map: 'Mercado+Modelo+Salvador', cost: 10 },
+          { tag: 'eve', type: 'meal', t: 'ערב במסעדת חוף', cost: 20 }
+        ]},
+        { title: 'סלבדור — טיול יום', rows: [
+          { tag: 'morning', type: 'act', t: 'טיול לאיי איטפאריקה', note: 'מעבורת לאי טרופי מול המפרץ.', map: 'Itaparica+Island', cost: 25 },
+          { tag: 'eve', type: 'meal', t: 'ערב אחרון בפלורינפוליס', cost: 18 }
+        ]}
+      ],
+      extras: [
+        { t: 'פרויה דו פורטה (Praia do Forte)', note: 'כפר חופים ושמורת צבות ים, שעה צפונה.', map: 'Praia+do+Forte+Bahia', cost: 30, tag: 'morning', type: 'act' },
+        { t: 'שיעור בישול באהייני', note: 'ללמוד להכין מוקקה ואקרז׳ה.', cost: 35, tag: 'noon', type: 'act' }
+      ]
+    },
+    pantanal: {
+      t: 'הפנטנל', s: 'ספארי יגוארים (יולי–אוקטובר)', img: IMG.pantanal, tags: ['nature'],
+      hotel: { backpack: 60, mid: 120, luxe: 280 }, minDays: 2, idealDays: 3, maxDays: 4,
+      days: [
+        { title: 'פנטנל — כניסה וספארי ראשון', rows: [
+          { tag: 'move', type: 'logi', t: 'טיסה לקויאבה (CGB) + נסיעה לפוזאדה', note: 'טיסה כ-3 שעות + נסיעה על ״טרנספנטנירה״.', cost: 110 },
+          { tag: 'noon', type: 'logi', t: 'צ׳ק אין ב-Pousada בלב הפנטנל', note: 'חוות אירוח עם מדריכים מקומיים.', cost: 0 },
+          { tag: 'eve', type: 'act', t: 'ספארי שקיעה ראשון', note: 'קאימנים, קפיברות וציפורים. יגואר אם מתמזל.', cost: 0 }
+        ]},
+        { title: 'פנטנל — יום ספארי מלא', rows: [
+          { tag: 'morning', type: 'act', t: 'ספארי נהר לחיפוש יגוארים', note: 'סירה לאורך הנהר — הסיכוי הכי גבוה בעולם לראות יגואר.', cost: 40 },
+          { tag: 'noon', type: 'act', t: 'שחייה או ספארי רגלי', note: 'תלוי בפוזאדה — טרקים או קיאקים.', cost: 0 },
+          { tag: 'eve', type: 'act', t: 'ספארי לילה', note: 'טפירים, נמיות ועיניים זוהרות בחושך.', cost: 0 }
+        ]},
+        { title: 'פנטנל — בוקר אחרון', rows: [
+          { tag: 'morning', type: 'act', t: 'ספארי שחר אחרון', note: 'הכי פעיל — החיות יוצאות עם האור.', cost: 0 },
+          { tag: 'noon', type: 'logi', t: 'חזרה לקויאבה וטיסה הלאה', cost: 110 }
+        ]}
+      ],
+      extras: [
+        { t: 'דיג פיראניות', note: 'חוויה קלאסית של הפנטנל.', cost: 20, tag: 'noon', type: 'act' }
+      ]
+    },
+    jeri: {
+      t: 'ז׳ריקוקוארה', s: 'כפר חופים ודיונות בצפון', img: IMG.jeri, tags: ['beach', 'nightlife'],
+      hotel: { backpack: 30, mid: 65, luxe: 150 }, minDays: 3, idealDays: 3, maxDays: 4,
+      days: [
+        { title: 'ז׳רי — הגעה ושקיעה', rows: [
+          { tag: 'move', type: 'logi', t: 'טיסה לפורטלזה + 4x4 לז׳רי', note: 'הכפר ללא כבישים סלולים — נוסעים על החול.', cost: 95 },
+          { tag: 'eve', type: 'act', t: 'שקיעה מדיונת החול (Duna do Pôr do Sol)', note: 'כל הכפר עולה לדיונה לשקיעה.', map: 'Duna+do+Por+do+Sol+Jericoacoara', cost: 0 },
+          { tag: 'eve', type: 'meal', t: 'ערב ברחוב הראשי', note: 'מסעדות, מוזיקה וקרחונים.', cost: 18 }
+        ]},
+        { title: 'ז׳רי — דיונות ולגונות', rows: [
+          { tag: 'morning', type: 'act', t: 'טיול באגי ללגונות הכחולות', note: 'Lagoa do Paraíso וערסלים מעל המים.', map: 'Lagoa+do+Paraiso+Jijoca', cost: 30 },
+          { tag: 'noon', type: 'act', t: 'שיעור קייט-סרפינג', note: 'ז׳רי היא בירת הקייט של ברזיל.', cost: 45 },
+          { tag: 'eve', type: 'act', t: 'השער הפתוח (Pedra Furada)', note: 'קשת סלע מפורסמת על החוף, בשפל.', map: 'Pedra+Furada+Jericoacoara', cost: 0 }
+        ]},
+        { title: 'ז׳רי — חוף רגוע', rows: [
+          { tag: 'morning', type: 'act', t: 'יום חוף ושנורקל', cost: 5 },
+          { tag: 'eve', type: 'act', t: 'שיעור פורו (ריקוד מקומי)', note: 'בכיכר המרכזית בערב.', cost: 0 }
+        ]}
+      ],
+      extras: [
+        { t: 'טוֹר לטאטאז׳ובה (Tatajuba)', note: 'דיונות ענק ולגונה שקטה יותר.', cost: 35, tag: 'morning', type: 'act' }
+      ]
+    },
+    saopaulo: {
+      t: 'סאו פאולו', s: 'מטרופולין, אמנות, אוכל וחיי לילה', img: IMG.saopaulo, tags: ['city', 'food', 'nightlife'],
+      hotel: { backpack: 35, mid: 80, luxe: 190 }, minDays: 2, idealDays: 3, maxDays: 4,
+      days: [
+        { title: 'סאו פאולו — לב העיר', rows: [
+          { tag: 'move', type: 'logi', t: 'טיסה פנימית לסאו פאולו (GRU/CGH)', note: 'כשעה מריו. רכבת/אובר לעיר.', cost: 60 },
+          { tag: 'noon', type: 'act', t: 'שדרת פאוליסטה ומוזיאון MASP', note: 'הלב הפועם של העיר + אוסף האמנות הגדול.', map: 'MASP+São+Paulo', cost: 12 },
+          { tag: 'eve', type: 'act', t: 'שכונת וילה מדליינה', note: 'בארים, גלריות וסצנה לילית.', map: 'Vila+Madalena+São+Paulo', cost: 0 },
+          { tag: 'eve', type: 'meal', t: 'ארוחת ערב גורמה', note: 'סאו פאולו היא בירת האוכל של ברזיל.', cost: 35 }
+        ]},
+        { title: 'סאו פאולו — אמנות ופארק', rows: [
+          { tag: 'morning', type: 'act', t: 'פארק איביראפוארה', note: 'ה״סנטרל פארק״ של סאו פאולו + מוזיאונים.', map: 'Parque+Ibirapuera', cost: 0 },
+          { tag: 'noon', type: 'act', t: 'סמטת הבאטמן (Beco do Batman)', note: 'סמטת גרפיטי מהמפורסמות בעולם.', map: 'Beco+do+Batman+São+Paulo', cost: 0 },
+          { tag: 'eve', type: 'meal', t: 'שוק העירוני (Mercadão)', note: 'כריך מורטדלה ופסטל — חובה.', map: 'Mercado+Municipal+São+Paulo', cost: 15 }
+        ]},
+        { title: 'סאו פאולו — יום חופשי', rows: [
+          { tag: 'morning', type: 'act', t: 'שכונת ליברדדה (הרובע היפני)', note: 'הקהילה היפנית הגדולה מחוץ ליפן.', map: 'Liberdade+São+Paulo', cost: 0 },
+          { tag: 'eve', type: 'meal', t: 'ערב אחרון', cost: 30 }
+        ]}
+      ],
+      extras: []
+    },
+    floripa: {
+      t: 'פלוריאנופוליס', s: 'אי של 42 חופים ומסיבות', img: IMG.floripa, tags: ['beach', 'nightlife', 'nature'],
+      hotel: { backpack: 30, mid: 70, luxe: 160 }, minDays: 3, idealDays: 3, maxDays: 5,
+      days: [
+        { title: 'פלוריפה — לגונה וחופים', rows: [
+          { tag: 'move', type: 'logi', t: 'טיסה פנימית לפלוריאנופוליס (FLN)', note: 'כשעה וחצי מסאו פאולו.', cost: 70 },
+          { tag: 'noon', type: 'act', t: 'Lagoa da Conceição', note: 'לב החיים של האי — לגונה, מסעדות וספורט מים.', map: 'Lagoa+da+Conceição+Florianópolis', cost: 0 },
+          { tag: 'eve', type: 'meal', t: 'ערב בלגונה', note: 'מסעדות פירות ים על המים.', cost: 22 }
+        ]},
+        { title: 'פלוריפה — חופי הצפון/מזרח', rows: [
+          { tag: 'morning', type: 'act', t: 'חוף ז׳ואקינה (Joaquina)', note: 'גלים לגלישה ודיונות חול להחליק עליהן.', map: 'Praia+da+Joaquina', cost: 0 },
+          { tag: 'noon', type: 'act', t: 'חוף קמפצ׳ה', note: 'מים צלולים, סירה לאי קמפצ׳ה.', map: 'Praia+do+Campeche', cost: 0 },
+          { tag: 'eve', type: 'act', t: 'חיי לילה בחוף ז׳ורֶרֶה', note: 'אזור המועדונים הגדול של ברזיל (בעיקר קיץ).', map: 'Jurerê+Internacional', cost: 25 }
+        ]},
+        { title: 'פלוריפה — טבע ודרום האי', rows: [
+          { tag: 'morning', type: 'act', t: 'מסלול ללגונה דו פאו (Lagoinha do Leste)', note: 'אחד החופים היפים שמגיעים אליו רק ברגל.', cost: 0 },
+          { tag: 'eve', type: 'meal', t: 'סקווינטה דה אוסטרה (צדפות)', note: 'פלוריפה מגדלת את רוב הצדפות של ברזיל.', cost: 25 }
+        ]}
+      ],
+      extras: []
+    },
+    buzios: {
+      t: 'בוזיוס', s: 'חצי-אי זוהר של חופים ובוהמה', img: IMG.buzios, tags: ['beach', 'nightlife'],
+      hotel: { backpack: 40, mid: 90, luxe: 210 }, minDays: 2, idealDays: 3, maxDays: 4,
+      days: [
+        { title: 'בוזיוס — רחוב האבנים', rows: [
+          { tag: 'move', type: 'logi', t: 'נסיעה מריו לבוזיוס', note: 'כ-2.5 שעות ברכב/שאטל צפונה.', cost: 30 },
+          { tag: 'eve', type: 'act', t: 'Rua das Pedras ואורלה בארדו', note: 'רחוב הטיילת הבוהמייני — חנויות, ברים ופסל בריז׳יט בארדו.', map: 'Rua+das+Pedras+Búzios', cost: 0 },
+          { tag: 'eve', type: 'meal', t: 'ארוחת ערב על הטיילת', cost: 28 }
+        ]},
+        { title: 'בוזיוס — סבב חופים', rows: [
+          { tag: 'morning', type: 'act', t: 'חוף פֶרַדורה (Ferradura)', note: 'מפרץ מוגן בצורת פרסה, מים רגועים.', map: 'Praia+da+Ferradura+Búzios', cost: 0 },
+          { tag: 'noon', type: 'act', t: 'חוף ז׳ריבה (Geribá)', note: 'חוף הגלישה והצעירים, ברים על החול.', map: 'Praia+de+Geribá', cost: 0 },
+          { tag: 'eve', type: 'act', t: 'שקיעה בחוף אוסוס (Ossos)', note: 'החוף הכי ותיק ויפה לשקיעה.', map: 'Praia+dos+Ossos+Búzios', cost: 0 }
+        ]},
+        { title: 'בוזיוס — ים ושיט', rows: [
+          { tag: 'morning', type: 'act', t: 'שייט סקונר סביב חופי בוזיוס', note: 'עוצרים לשנורקל במפרצים נסתרים.', cost: 30 },
+          { tag: 'eve', type: 'meal', t: 'ערב אחרון ברחוב האבנים', cost: 28 }
+        ]}
+      ],
+      extras: []
+    },
+    chapada: {
+      t: 'שאפאדה דיאמנטינה', s: 'מפלים, מערות ובריכות כחולות', img: IMG.chapada, tags: ['nature'],
+      hotel: { backpack: 25, mid: 55, luxe: 130 }, minDays: 3, idealDays: 4, maxDays: 5,
+      days: [
+        { title: 'שאפאדה — הגעה ותצפית', rows: [
+          { tag: 'move', type: 'logi', t: 'טיסה לסלבדור + נסיעה ללנסויס', note: 'כ-6 שעות נסיעה לכפר Lençóis, שער הפארק.', cost: 80 },
+          { tag: 'eve', type: 'act', t: 'שקיעה ממורו דו פאי אינסיו', note: 'תצפית הפתיחה הקלאסית על העמקים.', map: 'Morro+do+Pai+Inácio', cost: 10 },
+          { tag: 'eve', type: 'meal', t: 'ערב בכפר לנסויס', cost: 15 }
+        ]},
+        { title: 'שאפאדה — המפל הגדול', rows: [
+          { tag: 'morning', type: 'act', t: 'מסלול למפל העשן (Cachoeira da Fumaça)', note: '340 מ׳ — מהמפלים הגבוהים בברזיל. טרק של חצי יום.', map: 'Cachoeira+da+Fumaça', cost: 20 },
+          { tag: 'eve', type: 'meal', t: 'ערב מנוחה בכפר', cost: 15 }
+        ]},
+        { title: 'שאפאדה — מערות ובריכות כחולות', rows: [
+          { tag: 'morning', type: 'act', t: 'הבאר הכחולה (Poço Azul)', note: 'אור שמש שחודר למערה ומצית מים כחולים זוהרים.', map: 'Poço+Azul+Chapada', cost: 25 },
+          { tag: 'noon', type: 'act', t: 'שחייה ב-Poço Encantado (עונתי)', note: 'בריכה כחולה קסומה (בעיקר אפריל–ספטמבר).', cost: 25 },
+          { tag: 'eve', type: 'meal', t: 'ערב בכפר', cost: 15 }
+        ]},
+        { title: 'שאפאדה — יום טרק', rows: [
+          { tag: 'morning', type: 'act', t: 'טרק בעמק פאטי (Vale do Pati) — קטע יומי', note: 'אחד הטרקים היפים בברזיל. אפשר גם רב-יומי עם לינה.', map: 'Vale+do+Pati', cost: 30 },
+          { tag: 'eve', type: 'meal', t: 'ערב אחרון בכפר', cost: 15 }
+        ]}
+      ],
+      extras: []
+    }
+  };
+
+  // ====== התאמה לפי עונה (ברזיל — הפוך מישראל) ======
+  var SEASONS = {
+    summer: { name: 'קיץ ברזילאי (ינואר–מרץ)',
+      yes: 'ריו חמה ומושלמת לרחצה, חופי הצפון (ז׳ריקוקוארה) יבשים. אם נופל הקרנבל — חגיגה אדירה.',
+      no: 'הדרום-מזרח לח וסוער, הפנטנל מוצף, וסלבדור נכנסת לגשם. מחירי שיא בקרנבל.' },
+    autumn: { name: 'סתיו (אפריל–יוני)',
+      yes: 'החלון הכי נעים לריו ולאיגואסו — שמיים צלולים, פחות עומס. הפנטנל מתחיל להתייבש.',
+      no: 'הצפון-מזרח (סלבדור) בשיא עונת הגשמים. הים בריו מתקרר לקראת החורף.' },
+    winter: { name: 'חורף יבש (יולי–ספטמבר)',
+      yes: 'העונה הכי טובה בכלל: שיא היגוארים בפנטנל, ז׳רי יבשה, ריו שטופת שמש והצפון מתייבש.',
+      no: 'חופש גדול (יולי-אוגוסט) — עומס ומחירים גבוהים, והים בריו קריר לרחצה ממושכת.' },
+    spring: { name: 'אביב (אוקטובר–דצמבר)',
+      yes: 'הצפון-מזרח יבש ונעים, וריו מתחממת לקראת הקיץ. סוף העונה היבשה בפנטנל (עד נובמבר).',
+      no: 'מאמצע דצמבר מתחילה חופשת הקיץ הברזילאית — מחירים קופצים. הפנטנל נכנס לעונה רטובה.' },
+    flex: { name: 'גמיש',
+      yes: 'גמישות זה יתרון! נבחר יחד את היעדים, והם יכוונו אתכם לעונה הנכונה.',
+      no: 'רק זכרו: אין עונה אחת לכל ברזיל — חופי הצפון וריו כמעט הפוכים.' }
+  };
+  function whenLabel() { var k = S.season; return (k && SEASONS[k]) ? SEASONS[k].name.replace(/ \(.*\)/, '') : ''; }
+
+  var NOTFORGET = [
+    'דרכון בתוקף (אין צורך בוויזה, עד 90 יום)', 'ביטוח נסיעות מקיף', 'חיסון קדחת צהובה (10 ימים מראש)',
+    'eSIM לברזיל (5-10 ג׳יגה)', 'מתאם חשמל (2 פינים, 127V)', 'כרטיס בלי עמלת מט״ח',
+    'מתרגם פורטוגזית לאופליין', 'קרם הגנה + דוחה יתושים', 'דולרים לפריטה ראשונית', 'תרופות אישיות'
+  ];
+
+  var REF = [
+    { ic: 'fa-passport', t: 'ויזה, חיסונים וטיסות', html: '<p><b>ויזה:</b> ישראלים לא צריכים. חותמת ל-90 יום בשדה.</p><p><b>חיסון קדחת צהובה:</b> מומלץ לרוב אזורי ברזיל. צריך <b>10 ימים לפני הטיסה</b> כדי לפעול — קבעו תור במרפאת מטיילים מראש.</p><p><b>טיסות:</b> אין ישירה מת״א. עם עצירה אחת, 17-21 שעות. הלוך-חזור בעונת ביניים 3,000-5,000 ₪.</p>' },
+    { ic: 'fa-plane', t: 'טיסות פנימיות — חשוב!', html: '<p>ברזיל ענקית וכל מעבר בין אזורים הוא טיסה. זו <b>ההוצאה שהכי קל לפספס</b>.</p><p>תפסו טיסות פנימיות (LATAM, GOL, Azul) <b>2-3 חודשים מראש</b> כשהן זולות. המסלול שבנינו כבר כולל את הטיסות הדרושות.</p>' },
+    { ic: 'fa-shield-halved', t: 'בטיחות — בלי פאניקה', html: '<p>הסיכון האמיתי כמעט אף פעם לא אלימות — הוא שיגנבו לכם את הטלפון.</p><ul><li><b>לא מסתובבים עם הטלפון ביד</b> ברחוב.</li><li><b>אם שודדים — תנו.</b> התנגדות הופכת שוד לאירוע אלים.</li><li>חזרה בלילה — תמיד באובר.</li></ul><p>חירום: <b>190</b> משטרה · <b>192</b> אמבולנס · <b>193</b> כבאות.</p>' },
+    { ic: 'fa-sim-card', t: 'מהרגע שנוחתים', html: '<ul><li><b>תחבורה:</b> אובר ו-99 — זולות ובטוחות.</li><li><b>אינטרנט:</b> eSIM מהבית, 5-10 ג׳יגה.</li><li><b>כסף:</b> תמיד לשלם בריאל (לסרב ל״המרה נוחה״).</li><li><b>חשמל:</b> 127V בריו וסאו פאולו, שקע 2 פינים — קחו מתאם.</li></ul>' },
+    { ic: 'fa-star-of-david', t: 'חשוב לישראלים', html: '<p><b>לא לפרסם ברשתות על שירות צבאי</b> בזמן הטיול.</p><p><b>שמרו פרטי שגרירות</b> מראש (embassies.gov.il).</p><p><b>כשרות:</b> קהילה יהודית גדולה בסאו פאולו (היג׳ינופוליס) ובריו (חב״ד קופקבנה). מחוץ לערים — תכננו מראש.</p>' },
+    { ic: 'fa-comments', t: '10 מילים שיצילו אתכם', html: '<p>מדברים <b>פורטוגזית, לא ספרדית</b>:</p><p>תודה — <b>Obrigado/a</b> · היי — <b>Oi</b> · בבקשה — Por favor · כמה עולה? — Quanto custa? · החשבון — A conta · מים — Água · בירה — Cerveja · הכל טוב — Tudo bem</p>' }
+  ];
+
+  // ====== אסור לפספס / מאכלים / חוויות — לפי יעד ======
+  // cat: must=אסור לפספס, food=מאכל, exp=חוויה. destKey קושר לאיזה יעד. cost=דולר לאדם. tag/type לשיבוץ ביום.
+var HIGHLIGHTS = [
+    // ========== ריו דה ז׳ניירו ==========
+    // אסור לפספס
+    { id: 'h-escadaria', destKey: 'rio', cat: 'must', t: 'מדרגות סלרון', note: '215 מדרגות פסיפס צבעוני. חינם.', img: IMG.cristo, cost: 0, tag: 'noon', type: 'act', map: 'Escadaria+Selarón' },
+    { id: 'h-botanico', destKey: 'rio', cat: 'must', t: 'הגן הבוטני', note: 'יער גשם בלב העיר, קופים וטוקנים.', img: IMG.pantanal, cost: 8, tag: 'morning', type: 'act', map: 'Jardim+Botânico+Rio' },
+    { id: 'h-santateresa', destKey: 'rio', cat: 'must', t: 'שכונת סנטה תרזה', note: 'שכונת אמנים ציורית על גבעה, חשמלית היסטורית.', img: IMG.cristo, cost: 0, tag: 'noon', type: 'act', map: 'Santa+Teresa+Rio' },
+    { id: 'h-arpoador', destKey: 'rio', cat: 'must', t: 'שקיעה מסלע ארפואדור', note: 'המקומיים מוחאים כפיים לשקיעה. חינם.', img: IMG.beach, cost: 0, tag: 'eve', type: 'act', map: 'Arpoador' },
+    // אטרקציות
+    { id: 'h-maracana', destKey: 'rio', cat: 'attr', t: 'אצטדיון מראקנה', note: 'סיור או משחק כדורגל במקדש הכדורגל.', img: IMG.nightlife, cost: 20, tag: 'eve', type: 'act', map: 'Maracanã', site: 'https://www.google.com/search?q=Maracanã+jogos+ingressos' },
+    { id: 'h-amanha', destKey: 'rio', cat: 'attr', t: 'מוזיאון המחר', note: 'אדריכלות עתידנית בנמל המשופץ.', img: IMG.cristo, cost: 8, tag: 'noon', type: 'act', map: 'Museu+do+Amanhã' },
+    { id: 'h-tijuca', destKey: 'rio', cat: 'attr', t: 'יער טיחוקה', note: 'היער העירוני הגדול בעולם, מפלים ומסלולים.', img: IMG.pantanal, cost: 0, tag: 'morning', type: 'act', map: 'Floresta+da+Tijuca' },
+    { id: 'h-aqua', destKey: 'rio', cat: 'attr', t: 'AquaRio — האקווריום', note: 'האקווריום הגדול בדרום אמריקה.', img: IMG.beach, cost: 15, tag: 'noon', type: 'act', map: 'AquaRio' },
+    // חוויות
+    { id: 'h-favela', destKey: 'rio', cat: 'exp', t: 'סיור מודרך בפאבלה', note: 'רק עם מדריך מוסמך ומוכר.', img: IMG.cristo, cost: 30, tag: 'morning', type: 'act' },
+    { id: 'h-hangglide', destKey: 'rio', cat: 'exp', t: 'ריחוף מצנח רחיפה מעל ריו', note: 'המראה מ-Pedra Bonita אל חוף São Conrado.', img: IMG.beach, cost: 120, tag: 'morning', type: 'act', map: 'Pedra+Bonita+Rio' },
+    { id: 'h-boat', destKey: 'rio', cat: 'exp', t: 'שייט במפרץ גואנברה', note: 'רואים את ריו מהמים.', img: IMG.beach, cost: 35, tag: 'noon', type: 'act' },
+    // מאכלים מוכרים
+    { id: 'h-feijoada', destKey: 'rio', cat: 'food', t: 'פיז׳ואדה', note: 'המנה הלאומית. ב-Confeitaria Colombo ההיסטורי.', img: IMG.food, cost: 18, tag: 'noon', type: 'meal', map: 'Confeitaria+Colombo+Rio' },
+    { id: 'h-churrasco-rio', destKey: 'rio', cat: 'food', t: 'שחרסקו ב-Fogo de Chão', note: 'מסעדת בשרים אייקונית.', img: IMG.food, cost: 40, tag: 'eve', type: 'meal', map: 'Fogo+de+Chão+Rio' },
+    { id: 'h-acai', destKey: 'rio', cat: 'food', t: 'קערת אסאי על החוף', note: 'פרי קפוא סגול, מרענן ליום חם.', img: IMG.beach, cost: 6, tag: 'noon', type: 'meal' },
+    // אולמות, מופעים, מועדונים, פסטיבלים
+    { id: 'h-copacabana-palace', destKey: 'rio', cat: 'venue', t: 'מלון קופקבנה פאלאס', note: 'מלון יוקרה אייקוני מ-1923, סמל של ריו. גם לקוקטייל בבר.', img: IMG.beach, cost: 0, tag: 'eve', type: 'act', map: 'Copacabana+Palace', site: 'https://www.belmond.com/hotels/south-america/brazil/rio-de-janeiro/belmond-copacabana-palace/' },
+    { id: 'h-circo', destKey: 'rio', cat: 'venue', t: 'Circo Voador (לאפה)', note: 'אולם מופעים אגדי בלאפה. בדקו מי מופיע.', img: IMG.nightlife, cost: 25, tag: 'eve', type: 'act', map: 'Circo+Voador+Lapa', site: 'https://www.google.com/search?q=Circo+Voador+agenda+shows' },
+    { id: 'h-vivorio', destKey: 'rio', cat: 'venue', t: 'Vivo Rio', note: 'אולם הופעות גדול על שפת המפרץ.', img: IMG.nightlife, cost: 30, tag: 'eve', type: 'act', map: 'Vivo+Rio', site: 'https://www.google.com/search?q=Vivo+Rio+agenda+shows' },
+    { id: 'h-scenarium', destKey: 'rio', cat: 'venue', t: 'Rio Scenarium', note: 'בית מוזיקה מיתולוגי בלאפה — סמבה חיה על שלוש קומות.', img: IMG.nightlife, cost: 20, tag: 'eve', type: 'act', map: 'Rio+Scenarium', site: 'https://www.google.com/search?q=Rio+Scenarium+programação' },
+    { id: 'h-lapa', destKey: 'rio', cat: 'venue', t: 'קשתות לאפה — ערב ברחוב', note: 'שכונת הבילויים: ברים, סמבה וריקוד על המדרכה.', img: IMG.nightlife, cost: 25, tag: 'eve', type: 'act', map: 'Arcos+da+Lapa' },
+
+    // ========== מפלי איגואסו ==========
+    { id: 'h-iguacu-br', destKey: 'iguacu', cat: 'must', t: 'הפארק הברזילאי — הפנורמה', note: 'המבט הרחב על כל המפלים.', img: IMG.iguacu, cost: 22, tag: 'noon', type: 'act', map: 'Cataratas+do+Iguaçu+Brasil' },
+    { id: 'h-garganta', destKey: 'iguacu', cat: 'must', t: '״גרון השטן״ (צד ארגנטינה)', note: 'המפל העוצמתי ביותר — ממש מעליו.', img: IMG.iguacu, cost: 25, tag: 'morning', type: 'act', map: 'Garganta+del+Diablo+Iguazu' },
+    { id: 'h-aves', destKey: 'iguacu', cat: 'attr', t: 'Parque das Aves', note: 'מקלט ציפורים צמוד לפארק, טוקנים מקרוב.', img: IMG.pantanal, cost: 15, tag: 'eve', type: 'act', map: 'Parque+das+Aves', site: 'https://www.parquedasaves.com.br/' },
+    { id: 'h-itaipu', destKey: 'iguacu', cat: 'attr', t: 'סכר Itaipu', note: 'אחד הסכרים הגדולים בעולם, סיור מודרך (גם תאורת לילה).', img: IMG.iguacu, cost: 20, tag: 'eve', type: 'act', map: 'Itaipu+Dam', site: 'https://www.google.com/search?q=Itaipu+turismo+visita' },
+    { id: 'h-macuco', destKey: 'iguacu', cat: 'exp', t: 'שייט Macuco Safari אל תוך המפל', note: 'סירה שנכנסת מתחת למפל. נרטבים לגמרי.', img: IMG.iguacu, cost: 55, tag: 'noon', type: 'act', map: 'Macuco+Safari' },
+    { id: 'h-helicopter', destKey: 'iguacu', cat: 'exp', t: 'טיסת הליקופטר מעל המפלים', note: 'המבט הכי מרהיב — מהאוויר.', img: IMG.iguacu, cost: 140, tag: 'morning', type: 'act' },
+
+    // ========== סלבדור והצפון ==========
+    { id: 'h-pelourinho', destKey: 'salvador', cat: 'must', t: 'פלורינפוליס (Pelourinho)', note: 'המרכז ההיסטורי הצבעוני, מורשת עולמית.', img: IMG.salvador, cost: 0, tag: 'noon', type: 'act', map: 'Pelourinho+Salvador' },
+    { id: 'h-bonfim', destKey: 'salvador', cat: 'must', t: 'כנסיית בונפים', note: 'סרטי משאלות צבעוניים, סמל סלבדור.', img: IMG.salvador, cost: 0, tag: 'eve', type: 'act', map: 'Igreja+do+Bonfim' },
+    { id: 'h-lacerda', destKey: 'salvador', cat: 'attr', t: 'מעלית לסרטה (Elevador Lacerda)', note: 'מחברת את העיר העליונה לתחתונה מ-1873.', img: IMG.salvador, cost: 1, tag: 'noon', type: 'act', map: 'Elevador+Lacerda' },
+    { id: 'h-farol', destKey: 'salvador', cat: 'attr', t: 'מגדלור בארה (Farol da Barra)', note: 'מגדלור על החוף, מוזיאון ימי ושקיעות.', img: IMG.beach, cost: 5, tag: 'eve', type: 'act', map: 'Farol+da+Barra+Salvador' },
+    { id: 'h-mercado', destKey: 'salvador', cat: 'attr', t: 'שוק מרקאדו מודלו', note: 'אומנות וזכרונות מקומיים.', img: IMG.salvador, cost: 0, tag: 'noon', type: 'act', map: 'Mercado+Modelo+Salvador' },
+    { id: 'h-capoeira', destKey: 'salvador', cat: 'exp', t: 'מופע קפואירה', note: 'אמנות הלחימה-ריקוד שנולדה בבאהיה.', img: IMG.salvador, cost: 15, tag: 'eve', type: 'act' },
+    { id: 'h-cooking', destKey: 'salvador', cat: 'exp', t: 'שיעור בישול באהייני', note: 'ללמוד להכין מוקקה ואקרז׳ה.', img: IMG.food, cost: 35, tag: 'noon', type: 'act' },
+    { id: 'h-itaparica', destKey: 'salvador', cat: 'exp', t: 'טיול לאיי איטפאריקה', note: 'מעבורת לאי טרופי מול המפרץ.', img: IMG.beach, cost: 25, tag: 'morning', type: 'act', map: 'Itaparica+Island' },
+    { id: 'h-moqueca', destKey: 'salvador', cat: 'food', t: 'מוקקה (Moqueca)', note: 'תבשיל דגים בחלב קוקוס, המנה של באהיה.', img: IMG.food, cost: 18, tag: 'eve', type: 'meal' },
+    { id: 'h-acaraje', destKey: 'salvador', cat: 'food', t: 'אקרז׳ה ברחוב', note: 'כדורי שעועית מטוגנים, אוכל רחוב מקומי.', img: IMG.food, cost: 6, tag: 'noon', type: 'meal' },
+    { id: 'h-olodum', destKey: 'salvador', cat: 'venue', t: 'חזרות Olodum (שלישי בפלורינפוליס)', note: 'הקבוצה שהופיעה עם מייקל ג׳קסון — חזרה פתוחה מתופפת.', img: IMG.salvador, cost: 15, tag: 'eve', type: 'act', map: 'Olodum+Pelourinho', site: 'https://www.google.com/search?q=Olodum+ensaio+Pelourinho+terça' },
+    { id: 'h-pelo-tuesday', destKey: 'salvador', cat: 'venue', t: 'Terça da Bênção — ערב מוזיקה בפלורינפוליס', note: 'כל יום שלישי הרחובות מתמלאים מוזיקה חיה חינם.', img: IMG.salvador, cost: 0, tag: 'eve', type: 'act', map: 'Pelourinho+Salvador', site: 'https://www.google.com/search?q=Terça+da+Bênção+Pelourinho' },
+    { id: 'h-concha', destKey: 'salvador', cat: 'venue', t: 'Concha Acústica — אמפיתיאטרון', note: 'אמפיתיאטרון פתוח למופעים גדולים.', img: IMG.nightlife, cost: 25, tag: 'eve', type: 'act', map: 'Concha+Acústica+Salvador', site: 'https://www.google.com/search?q=Concha+Acústica+TCA+programação' },
+
+    // ========== הפנטנל ==========
+    { id: 'h-jaguar', destKey: 'pantanal', cat: 'must', t: 'ספארי נהר ליגוארים', note: 'הסיכוי הכי גבוה בעולם לראות יגואר.', img: IMG.pantanal, cost: 40, tag: 'morning', type: 'act' },
+    { id: 'h-nightsafari', destKey: 'pantanal', cat: 'exp', t: 'ספארי לילה', note: 'טפירים ועיניים זוהרות בחושך.', img: IMG.pantanal, cost: 0, tag: 'eve', type: 'act' },
+    { id: 'h-piranha', destKey: 'pantanal', cat: 'exp', t: 'דיג פיראניות', note: 'חוויה קלאסית של הפנטנל.', img: IMG.pantanal, cost: 20, tag: 'noon', type: 'act' },
+    { id: 'h-horse-pantanal', destKey: 'pantanal', cat: 'exp', t: 'ספארי רכיבה על סוסים', note: 'הדרך שבה הפנטנרוס עצמם חוצים את הביצות.', img: IMG.pantanal, cost: 30, tag: 'morning', type: 'act' },
+    { id: 'h-birding', destKey: 'pantanal', cat: 'attr', t: 'תצפית ציפורים', note: 'מהעשירים בעולם — ארות, טוקנים ו-650 מינים.', img: IMG.pantanal, cost: 0, tag: 'noon', type: 'act' },
+
+    // ========== ז׳ריקוקוארה ==========
+    { id: 'h-duna', destKey: 'jeri', cat: 'must', t: 'שקיעה מדיונת החול', note: 'כל הכפר עולה לדיונה לשקיעה.', img: IMG.jeri, cost: 0, tag: 'eve', type: 'act', map: 'Duna+do+Por+do+Sol+Jericoacoara' },
+    { id: 'h-pedra', destKey: 'jeri', cat: 'must', t: 'השער הפתוח (Pedra Furada)', note: 'קשת סלע מפורסמת על החוף, בשפל.', img: IMG.jeri, cost: 0, tag: 'morning', type: 'act', map: 'Pedra+Furada+Jericoacoara' },
+    { id: 'h-lagoon', destKey: 'jeri', cat: 'attr', t: 'באגי ללגונות הכחולות', note: 'ערסלים מעל המים ב-Lagoa do Paraíso.', img: IMG.jeri, cost: 30, tag: 'morning', type: 'act', map: 'Lagoa+do+Paraiso+Jijoca' },
+    { id: 'h-tatajuba', destKey: 'jeri', cat: 'attr', t: 'טור לטאטאז׳ובה (Tatajuba)', note: 'דיונות ענק ולגונה שקטה יותר.', img: IMG.jeri, cost: 35, tag: 'morning', type: 'act' },
+    { id: 'h-kite', destKey: 'jeri', cat: 'exp', t: 'שיעור קייט-סרפינג', note: 'ז׳רי היא בירת הקייט של ברזיל.', img: IMG.jeri, cost: 45, tag: 'noon', type: 'act' },
+    { id: 'h-capoeira-jeri', destKey: 'jeri', cat: 'exp', t: 'שיעור פורו (ריקוד מקומי)', note: 'בכיכר המרכזית בערב.', img: IMG.jeri, cost: 0, tag: 'eve', type: 'act' },
+    { id: 'h-forro-jeri', destKey: 'jeri', cat: 'venue', t: 'ערב פורו ברחוב הראשי', note: 'מסעדות, מוזיקה חיה וריקוד תחת כיפת השמיים.', img: IMG.jeri, cost: 18, tag: 'eve', type: 'act', map: 'Rua+Principal+Jericoacoara' },
+
+    // ========== סאו פאולו ==========
+    { id: 'h-masp', destKey: 'saopaulo', cat: 'must', t: 'מוזיאון MASP', note: 'אוסף האמנות הגדול, מרחף על עמודים אדומים.', img: IMG.saopaulo, cost: 12, tag: 'noon', type: 'act', map: 'MASP+São+Paulo' },
+    { id: 'h-ibira', destKey: 'saopaulo', cat: 'must', t: 'פארק איביראפוארה', note: 'ה״סנטרל פארק״ של סאו פאולו + מוזיאונים.', img: IMG.saopaulo, cost: 0, tag: 'morning', type: 'act', map: 'Parque+Ibirapuera' },
+    { id: 'h-batman', destKey: 'saopaulo', cat: 'attr', t: 'סמטת הבאטמן (Beco do Batman)', note: 'סמטת גרפיטי מהמפורסמות בעולם.', img: IMG.saopaulo, cost: 0, tag: 'noon', type: 'act', map: 'Beco+do+Batman+São+Paulo' },
+    { id: 'h-liberdade', destKey: 'saopaulo', cat: 'attr', t: 'רובע ליברדדה (היפני)', note: 'הקהילה היפנית הגדולה מחוץ ליפן.', img: IMG.saopaulo, cost: 0, tag: 'noon', type: 'act', map: 'Liberdade+São+Paulo' },
+    { id: 'h-mercadao', destKey: 'saopaulo', cat: 'food', t: 'כריך מורטדלה במרקאדאו', note: 'המנה האגדית של השוק העירוני.', img: IMG.food, cost: 12, tag: 'noon', type: 'meal', map: 'Mercado+Municipal+São+Paulo' },
+    { id: 'h-sampa-dining', destKey: 'saopaulo', cat: 'food', t: 'ערב גורמה בז׳רדינס', note: 'סאו פאולו היא בירת האוכל של דרום אמריקה.', img: IMG.food, cost: 45, tag: 'eve', type: 'meal', map: 'Jardins+São+Paulo' },
+    { id: 'h-dedalo', destKey: 'saopaulo', cat: 'venue', t: 'Vila Madalena — ברים וגלריות', note: 'שכונת הבוהמה והחיים הליליים.', img: IMG.nightlife, cost: 25, tag: 'eve', type: 'act', map: 'Vila+Madalena+São+Paulo' },
+    { id: 'h-allianz', destKey: 'saopaulo', cat: 'venue', t: 'Allianz Parque — אצטדיון ומופעים', note: 'אולם הענק של סאו פאולו — כדורגל ומופעים בינלאומיים.', img: IMG.nightlife, cost: 30, tag: 'eve', type: 'act', map: 'Allianz+Parque', site: 'https://www.google.com/search?q=Allianz+Parque+shows+agenda' },
+
+    // ========== פלוריאנופוליס ==========
+    { id: 'h-lagoa-floripa', destKey: 'floripa', cat: 'must', t: 'Lagoa da Conceição', note: 'לב החיים של האי — לגונה, מסעדות וספורט מים.', img: IMG.floripa, cost: 0, tag: 'noon', type: 'act', map: 'Lagoa+da+Conceição+Florianópolis' },
+    { id: 'h-joaquina', destKey: 'floripa', cat: 'must', t: 'חוף ז׳ואקינה', note: 'גלים לגלישה ודיונות חול להחליק עליהן.', img: IMG.beach, cost: 0, tag: 'morning', type: 'act', map: 'Praia+da+Joaquina' },
+    { id: 'h-lagoinha', destKey: 'floripa', cat: 'attr', t: 'מסלול ללגואיניה דו לסטה', note: 'חוף נסתר שמגיעים אליו רק ברגל.', img: IMG.beach, cost: 0, tag: 'morning', type: 'act', map: 'Lagoinha+do+Leste' },
+    { id: 'h-sandboard', destKey: 'floripa', cat: 'exp', t: 'סנדבורד בדיונות ז׳ואקינה', note: 'מחליקים על לוח במורד הדיונות.', img: IMG.beach, cost: 15, tag: 'noon', type: 'act' },
+    { id: 'h-oyster', destKey: 'floripa', cat: 'food', t: 'צדפות טריות (Ostras)', note: 'פלוריפה מגדלת את רוב הצדפות של ברזיל.', img: IMG.food, cost: 25, tag: 'eve', type: 'meal', map: 'Ribeirão+da+Ilha' },
+    { id: 'h-jurere', destKey: 'floripa', cat: 'venue', t: 'ז׳ורֶרֶה אינטרנסיונל — מועדוני חוף', note: 'אזור המסיבות והביץ׳-קלאבים של ברזיל (בעיקר קיץ).', img: IMG.nightlife, cost: 40, tag: 'eve', type: 'act', map: 'Jurerê+Internacional', site: 'https://www.google.com/search?q=Jurerê+Internacional+beach+club+festa' },
+
+    // ========== בוזיוס ==========
+    { id: 'h-ruadaspedras', destKey: 'buzios', cat: 'must', t: 'Rua das Pedras ואורלה בארדו', note: 'רחוב הטיילת הבוהמייני עם פסל בריז׳יט בארדו.', img: IMG.buzios, cost: 0, tag: 'eve', type: 'act', map: 'Rua+das+Pedras+Búzios' },
+    { id: 'h-ferradura', destKey: 'buzios', cat: 'must', t: 'חוף פֶרַדורה', note: 'מפרץ מוגן בצורת פרסה, מים רגועים.', img: IMG.beach, cost: 0, tag: 'morning', type: 'act', map: 'Praia+da+Ferradura+Búzios' },
+    { id: 'h-geriba', destKey: 'buzios', cat: 'attr', t: 'חוף ז׳ריבה (Geribá)', note: 'חוף הגלישה והצעירים, ברים על החול.', img: IMG.beach, cost: 0, tag: 'noon', type: 'act', map: 'Praia+de+Geribá' },
+    { id: 'h-ossos', destKey: 'buzios', cat: 'attr', t: 'שקיעה בחוף אוסוס (Ossos)', note: 'החוף הכי ותיק ויפה לשקיעה.', img: IMG.beach, cost: 0, tag: 'eve', type: 'act', map: 'Praia+dos+Ossos+Búzios' },
+    { id: 'h-schooner', destKey: 'buzios', cat: 'exp', t: 'שייט סקונר סביב החופים', note: 'עוצרים לשנורקל במפרצים נסתרים.', img: IMG.beach, cost: 30, tag: 'morning', type: 'act' },
+
+    // ========== שאפאדה דיאמנטינה ==========
+    { id: 'h-fumaca', destKey: 'chapada', cat: 'must', t: 'מפל העשן (Cachoeira da Fumaça)', note: '340 מ׳ — מהמפלים הגבוהים בברזיל.', img: IMG.chapada, cost: 20, tag: 'morning', type: 'act', map: 'Cachoeira+da+Fumaça' },
+    { id: 'h-painacio', destKey: 'chapada', cat: 'must', t: 'תצפית מורו דו פאי אינסיו', note: 'התצפית הקלאסית על העמקים, מושלמת לשקיעה.', img: IMG.chapada, cost: 10, tag: 'eve', type: 'act', map: 'Morro+do+Pai+Inácio' },
+    { id: 'h-pocoazul', destKey: 'chapada', cat: 'must', t: 'הבאר הכחולה (Poço Azul)', note: 'אור שמש שמצית מים כחולים זוהרים במערה.', img: IMG.chapada, cost: 25, tag: 'morning', type: 'act', map: 'Poço+Azul+Chapada' },
+    { id: 'h-pati', destKey: 'chapada', cat: 'exp', t: 'טרק בעמק פאטי (Vale do Pati)', note: 'אחד הטרקים היפים בברזיל — יומי או רב-יומי.', img: IMG.chapada, cost: 30, tag: 'morning', type: 'act', map: 'Vale+do+Pati' },
+    { id: 'h-poamarelo', destKey: 'chapada', cat: 'attr', t: 'גלישה טבעית ב-Cachoeira do Buracão', note: 'מגלשת סלע טבעית לבריכה ירוקה.', img: IMG.chapada, cost: 20, tag: 'noon', type: 'act', map: 'Cachoeira+do+Buracão' }
+  ];
+
+  // ================= STATE =================
+  // גרסת סכמה — כל שינוי מהותי מעלה את המספר, וכך המצב השמור הישן מתאפס אוטומטית אצל כל המשתמשים
+  var SCHEMA = 4;
+  var STORE = 'tpBrazilV2_s' + SCHEMA;
+  // ניקוי מפתחות ישנים של גרסאות קודמות כדי לא להשאיר זבל בטלפון
+  try {
+    ['tpBrazilV2', 'tpBrazilV2_s1', 'tpBrazilV2_s2', 'tpBrazilV2_s3', 'tpBrazilPlanner', 'bxTripBrazil', 'bxPlanBrazil'].forEach(function (k) { try { localStorage.removeItem(k); } catch (e) {} });
+  } catch (e) {}
+  var S = load();
+  function load() {
+    var def = { step: 1, season: '', days: 14, pax: 2, style: 'mid', lo: 275, hi: 460, exp: [], extras: [], dests: [], plan: null, chk: {}, view: 'cards' };
+    // plan: {days:[{destKey,title,rows:[{tag,type,t,note,map,cost}]}]}
+    try {
+      var r = localStorage.getItem(STORE); if (!r) return def;
+      var o = Object.assign(def, JSON.parse(r));
+      // חיסון מפני מצב שמור ישן/לא תקין — מסננים מפתחות שכבר לא קיימים
+      if (!Array.isArray(o.dests)) o.dests = [];
+      o.dests = o.dests.filter(function (k) { return DEST[k]; });
+      if (!Array.isArray(o.exp)) o.exp = [];
+      if (!Array.isArray(o.extras)) o.extras = [];
+      o.extras = o.extras.filter(function (id) { return HIGHLIGHTS.some(function (h) { return h.id === id; }); });
+      // אם התוכנית השמורה מפנה ליעד שלא קיים — זורקים אותה כדי שתיבנה מחדש
+      if (o.plan && o.plan.days && o.plan.days.some(function (d) { return !DEST[d.destKey]; })) o.plan = null;
+      if (typeof o.step !== 'number' || o.step < 1 || o.step > 6) o.step = 1;
+      return o;
+    } catch (e) { return def; }
+  }
+  function save() { try { localStorage.setItem(STORE, JSON.stringify(S)); } catch (e) {} }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  // $ בטוח: אם אלמנט חסר (למשל בוורדפרס לפני טעינה מלאה), מחזיר אובייקט דמה כדי שהאתחול לא יקרוס
+  var _stub = null;
+  function makeStub() { var d = document.createElement('div'); return d; }
+  var $ = function (id) { return document.getElementById(id) || makeStub(); };
+  var body = $('tpBody');
+  var USD = 3.7; // דולר≈שקל גס, להצגה בלבד (התקציב בדולרים כמו בדוגמה)
+
+  // ===== בניית המסלול המפורט מהיעדים שנבחרו =====
+  function allocDays() {
+    // מחלק את S.days בין היעדים הנבחרים לפי idealDays, חתך למקסימום, עודף ל"זמן חופשי" של היעד האחרון
+    var chosen = S.dests.map(function (k) { return DEST[k]; }).filter(Boolean);
+    if (!chosen.length) return [];
+    var alloc = chosen.map(function (d) { return d.idealDays; });
+    var sum = alloc.reduce(function (a, b) { return a + b; }, 0);
+    var gi;
+    while (sum > S.days) { var red = false; for (gi = alloc.length - 1; gi >= 0 && sum > S.days; gi--) { if (alloc[gi] > chosen[gi].minDays) { alloc[gi]--; sum--; red = true; } } if (!red) break; }
+    // עודף ימים: קודם ממלאים עד maxDays של כל יעד, רק אז מאפשרים גלישה מעבר (יום חופשי) בפיזור שווה
+    while (sum < S.days) { var add = false; for (gi = 0; gi < alloc.length && sum < S.days; gi++) { if (alloc[gi] < chosen[gi].maxDays) { alloc[gi]++; sum++; add = true; } } if (!add) break; }
+    while (sum < S.days) { var g2 = false; for (gi = 0; gi < alloc.length && sum < S.days; gi++) { alloc[gi]++; sum++; g2 = true; } if (!g2) break; }
+    return chosen.map(function (d, i) { return { key: S.dests[i], n: alloc[i] }; });
+  }
+  function buildPlan() {
+    var plan = { days: [] };
+    allocDays().forEach(function (a) {
+      var d = DEST[a.key];
+      for (var i = 0; i < a.n; i++) {
+        var tmpl = d.days[i] || { title: d.t + ' — יום חופשי', rows: [
+          { tag: 'morning', type: 'act', t: 'זמן חופשי / חוף', note: 'יום להתאוששות או לחזור למקום אהוב.', cost: 10 },
+          { tag: 'eve', type: 'meal', t: 'ארוחת ערב', cost: 18 }
+        ]};
+        plan.days.push({ destKey: a.key, destName: d.t, title: tmpl.title, rows: tmpl.rows.map(function (r) { return Object.assign({}, r); }) });
+      }
+    });
+    // שיבוץ החוויות/מאכלים/אסור-לפספס שנבחרו — ליום הראשון הפנוי של אותו יעד
+    (S.extras || []).forEach(function (hid) {
+      var h = HIGHLIGHTS.filter(function (x) { return x.id === hid; })[0]; if (!h) return;
+      var dayList = plan.days.filter(function (dy) { return dy.destKey === h.destKey; });
+      if (!dayList.length) return;
+      // כבר קיים (מהתבנית)? דלג
+      var exists = dayList.some(function (dy) { return dy.rows.some(function (r) { return r.t === h.t; }); });
+      if (exists) return;
+      // בחר את היום עם הכי מעט שורות באותו יעד, כדי לפזר
+      var target = dayList.reduce(function (best, dy) { return dy.rows.length < best.rows.length ? dy : best; }, dayList[0]);
+      target.rows.push({ tag: h.tag, type: h.type, t: h.t, note: h.note, cost: h.cost, map: h.map });
+    });
+    S.plan = plan; save();
+  }
+  function hotelPerNight(destKey) { var d = DEST[destKey]; return d ? (d.hotel[S.style] || 0) : 0; }
+
+  // ================= RENDER =================
+  function go(step) {
+    S.step = step; save();
+    body.querySelectorAll('.tp-pane').forEach(function (p) { p.classList.toggle('show', +p.getAttribute('data-pane') === step); });
+    $('tpSteps').querySelectorAll('.tp-step-tab').forEach(function (t) { var n = +t.getAttribute('data-go'); t.classList.toggle('active', n === step); t.classList.toggle('done', n < step); });
+    $('tpBack').classList.toggle('hide', step === 1);
+    var next = $('tpNext');
+    if (step === 6) { next.innerHTML = '<i class="fab fa-whatsapp"></i> שלחו לוואטסאפ'; next.classList.add('tp-share'); }
+    else if (step === 5) { next.innerHTML = 'בנו לי מסלול <i class="fas fa-arrow-left"></i>'; next.classList.remove('tp-share'); }
+    else { next.innerHTML = 'הבא <i class="fas fa-arrow-left"></i>'; next.classList.remove('tp-share'); }
+    if (step === 3) renderExp();
+    if (step === 4) renderDests();
+    if (step === 5) renderExtras();
+    if (step === 6) { if (!S.plan) buildPlan(); renderPlan(); }
+    var card = document.querySelector('.tp-card');
+    if (card && step !== 1) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // שלב 1 — בורר עונות
+  var whenBox = $('tpWhen'), verdict = $('tpVerdict');
+  function onSeasonClick(b) {
+    var se = b.getAttribute('data-se');
+    S.season = (S.season === se) ? '' : se;
+    save(); renderWhen();
+  }
+  function renderWhen() {
+    document.querySelectorAll('#tpWhen .tp-chip').forEach(function (c) { c.classList.toggle('on', c.getAttribute('data-se') === S.season); });
+    if (S.season && SEASONS[S.season]) {
+      $('tpVYes').innerHTML = '<b>מתאים:</b> ' + SEASONS[S.season].yes;
+      $('tpVNo').innerHTML = '<b>פחות מתאים:</b> ' + SEASONS[S.season].no;
+      verdict.classList.add('show');
+    } else verdict.classList.remove('show');
+  }
+
+  // שלב 2
+  function onStyleClick(b) { S.lo = +b.dataset.lo; S.hi = +b.dataset.hi; S.style = b.dataset.k; save(); renderBasics(); }
+  function renderBasics() {
+    $('tpDaysOut').innerHTML = S.days + '<small>ימים</small>';
+    $('tpPaxOut').innerHTML = S.pax + '<small>אנשים</small>';
+    document.querySelectorAll('#tpStyle .tp-styleopt').forEach(function (b) { b.classList.toggle('on', b.dataset.k === S.style); });
+    $('tpBudgetVal').textContent = (S.lo * S.days).toLocaleString('he-IL') + '–' + (S.hi * S.days).toLocaleString('he-IL') + ' ₪';
+  }
+
+  // שלב 3
+  function renderExp() {
+    $('tpExp').innerHTML = EXPERIENCES.map(function (e) {
+      var on = S.exp.indexOf(e.id) !== -1;
+      return '<button class="tp-pick' + (on ? ' on' : '') + '" data-exp="' + e.id + '" type="button"><span class="bg" style="background-image:url(\'' + e.img + '\')"></span><span class="chk"><i class="fas fa-check"></i></span><span class="cap"><b>' + esc(e.t) + '</b><span>' + esc(e.s) + '</span></span></button>';
+    }).join('');
+    $('tpExpCount').textContent = S.exp.length;
+  }
+  function onExpClick(b) { var id = b.getAttribute('data-exp'); var i = S.exp.indexOf(id); if (i === -1) S.exp.push(id); else S.exp.splice(i, 1); save(); renderExp(); }
+
+  // שלב 4
+  function relevantTags() { var t = {}; EXPERIENCES.forEach(function (e) { if (S.exp.indexOf(e.id) !== -1) e.tags.forEach(function (x) { t[x] = true; }); }); return t; }
+  function renderDests() {
+    var tags = relevantTags();
+    var keys = Object.keys(DEST).filter(function (k) { return !Object.keys(tags).length || DEST[k].tags.some(function (t) { return tags[t]; }); });
+    if (!keys.length) { $('tpDestWrap').innerHTML = '<div class="tp-empty-places"><i class="fas fa-arrow-right-long"></i>חזרו שלב אחורה וסמנו מה מושך אתכם.</div>'; return; }
+    $('tpDestWrap').innerHTML = '<div class="tp-gallery">' + keys.map(function (k) {
+      var d = DEST[k], on = S.dests.indexOf(k) !== -1;
+      return '<button class="tp-pick' + (on ? ' on' : '') + '" data-dest="' + k + '" type="button"><span class="bg" style="background-image:url(\'' + d.img + '\')"></span><span class="chk"><i class="fas fa-check"></i></span><span class="cap"><b>' + esc(d.t) + '</b><span>' + esc(d.s) + '</span></span></button>';
+    }).join('') + '</div><p class="tp-gallery-note">בחרתם <b>' + S.dests.length + '</b> יעדים. נחלק ביניהם את ' + S.days + ' הימים.</p>';
+  }
+  function onDestClick(b) {
+    var k = b.getAttribute('data-dest'); var i = S.dests.indexOf(k);
+    if (i === -1) S.dests.push(k); else S.dests.splice(i, 1);
+    // ננקה חוויות של יעד שהוסר
+    S.extras = (S.extras || []).filter(function (hid) { var h = HIGHLIGHTS.filter(function (x){return x.id===hid;})[0]; return h && S.dests.indexOf(h.destKey) !== -1; });
+    S.plan = null; save(); renderDests();
+  }
+
+  // שלב 5 — אסור לפספס / מאכלים / חוויות (לפי היעדים שנבחרו)
+  var CATS = [
+    { k: 'must', t: 'אסור לפספס', i: 'fa-star' },
+    { k: 'attr', t: 'אטרקציות ומקומות', i: 'fa-camera-retro' },
+    { k: 'venue', t: 'מופעים, מועדונים ואייקונים', i: 'fa-music' },
+    { k: 'exp', t: 'חוויות מיוחדות', i: 'fa-person-hiking' },
+    { k: 'food', t: 'מאכלים מוכרים', i: 'fa-utensils' }
+  ];
+  function renderExtras() {
+    var wrap = $('tpExtrasWrap');
+    if (!S.dests.length) { wrap.innerHTML = '<div class="tp-empty-places"><i class="fas fa-arrow-right-long"></i>קודם בחרו יעדים בשלב הקודם.</div>'; return; }
+    var pool = HIGHLIGHTS.filter(function (h) { return S.dests.indexOf(h.destKey) !== -1; });
+    S.extras = S.extras || [];
+    var html = '';
+    CATS.forEach(function (c) {
+      var items = pool.filter(function (h) { return h.cat === c.k; });
+      if (!items.length) return;
+      html += '<div class="tp-exgroup"><h3 class="tp-exgroup-h"><i class="fas ' + c.i + '"></i> ' + c.t + ' <span class="tp-exgroup-n">(' + items.length + ')</span></h3><div class="tp-gallery dense">' +
+        items.map(function (h) {
+          var on = S.extras.indexOf(h.id) !== -1;
+          var destName = DEST[h.destKey] ? DEST[h.destKey].t : '';
+          var siteLink = h.site ? '<a class="tp-pick-site" href="' + h.site + '" target="_blank" rel="noopener" title="לאתר / לבדיקת מופעים"><i class="fas fa-arrow-up-right-from-square"></i></a>' : '';
+          return '<div class="tp-pick-wrap"><button class="tp-pick' + (on ? ' on' : '') + '" data-ex="' + h.id + '" type="button"><span class="bg" style="background-image:url(\'' + h.img + '\')"></span><span class="chk"><i class="fas fa-check"></i></span><span class="cap"><b>' + esc(h.t) + '</b><span>' + esc(destName) + (h.cost ? ' · $' + h.cost : '') + '</span></span></button>' + siteLink + '</div>';
+        }).join('') + '</div></div>';
+    });
+    wrap.innerHTML = html + '<p class="tp-gallery-note">סימנתם <b>' + S.extras.length + '</b> חוויות. הן ישובצו אוטומטית למסלול ביעד המתאים.</p>';
+  }
+  function onExtraClick(b) {
+    var id = b.getAttribute('data-ex'); var i = S.extras.indexOf(id);
+    if (i === -1) S.extras.push(id); else S.extras.splice(i, 1);
+    S.plan = null; save(); renderExtras();
+  }
+
+  // שלב 6 — מסלול מפורט
+  var board = $('tpDayBoard');
+  function dayCost(day) {
+    var c = 0; day.rows.forEach(function (r) { c += (+r.cost || 0) * S.pax; });
+    c += hotelPerNight(day.destKey) * S.pax;
+    return c;
+  }
+  function renderPlan() {
+    var whenTxt = whenLabel();
+    $('tpSummary').innerHTML =
+      '<span class="tp-pill"><i class="fas fa-calendar-days"></i><b>' + S.days + '</b> ימים</span>' +
+      '<span class="tp-pill"><i class="fas fa-users"></i><b>' + S.pax + '</b> מטיילים</span>' +
+      (whenTxt ? '<span class="tp-pill"><i class="fas fa-sun"></i>' + whenTxt + '</span>' : '') +
+      '<span class="tp-pill"><i class="fas fa-location-dot"></i>' + S.dests.map(function (k) { return DEST[k] ? esc(DEST[k].t) : ''; }).filter(Boolean).join(' · ') + '</span>';
+    // ימים
+    board.innerHTML = S.plan.days.map(function (day, di) {
+      var rows = day.rows.map(function (r, ri) {
+        var costTxt = (+r.cost > 0) ? ('$' + (r.cost * S.pax).toLocaleString('en-US')) : '';
+        return '<div class="tp-row' + (r.type === 'logi' ? ' logi' : '') + '">' +
+          '<span class="tag">' + (TAG[r.tag] || '') + '</span>' +
+          '<span class="body"><b>' + esc(r.t) + '</b>' + (r.note ? '<span class="note">' + esc(r.note) + '</span>' : '') +
+          (r.map ? '<a class="map" href="https://www.google.com/maps/search/' + r.map + '" target="_blank" rel="noopener"><i class="fas fa-location-dot"></i> במפות</a>' : '') + '</span>' +
+          (costTxt ? '<span class="cost">' + costTxt + '</span>' : '') +
+          '<button class="del" data-del="' + di + '_' + ri + '" title="הסרה"><i class="fas fa-xmark"></i></button></div>';
+      }).join('');
+      var hotel = hotelPerNight(day.destKey);
+      return '<div class="tp-day"><div class="tp-day-hd">' +
+        '<span class="tp-day-num">' + (di + 1) + '</span>' +
+        '<span class="tp-day-ct"><b>יום ' + (di + 1) + ' — ' + esc(day.title) + '</b>' + (hotel ? '<span>לינה: ' + esc(day.destName) + ' · $' + (hotel * S.pax) + ' ללילה</span>' : '') + '</span>' +
+        '<span class="tp-day-cost"><b>$' + dayCost(day).toLocaleString('en-US') + '</b><span>סה״כ ליום</span></span>' +
+        '</div><div class="tp-rows">' + rows + '</div>' +
+        '<button class="tp-add-row" data-addday="' + di + '"><i class="fas fa-plus"></i> הוסיפו פעילות ליום הזה</button></div>';
+    }).join('');
+    renderTable();
+    applyView();
+    renderTotals();
+    renderNotForget();
+  }
+
+  // ===== תצוגת טבלה (אופציה 2 — ימים כשורות) =====
+  function slotRows(day, slotKey) {
+    var items = day.rows.filter(function (r) { return r.tag === slotKey; });
+    if (!items.length) return '<span style="color:var(--ink-mute)">—</span>';
+    return items.map(function (r) { return '<div class="slot"><b>' + esc(r.t) + '</b>' + (r.note ? '<small>' + esc(r.note) + '</small>' : '') + '</div>'; }).join('');
+  }
+  function renderTable() {
+    var moveSlots = ['move', 'stay'];
+    var rowsHtml = S.plan.days.map(function (day, di) {
+      // שורת "מעבר/לוגיסטיקה" מתמזגת לבוקר אם קיימת
+      var morning = slotRows(day, 'morning');
+      var logi = day.rows.filter(function (r) { return r.tag === 'move' || r.tag === 'stay'; });
+      if (logi.length) morning = logi.map(function (r) { return '<div class="slot"><b>🚐 ' + esc(r.t) + '</b></div>'; }).join('') + morning;
+      return '<tr><th>יום ' + (di + 1) + '<small>' + esc(day.destName) + '</small></th>' +
+        '<td>' + morning + '</td>' +
+        '<td>' + slotRows(day, 'noon') + '</td>' +
+        '<td>' + slotRows(day, 'eve') + '</td>' +
+        '<td class="cost-col">$' + dayCost(day).toLocaleString('en-US') + '</td></tr>';
+    }).join('');
+    var grand = S.plan.days.reduce(function (a, d) { return a + dayCost(d); }, 0);
+    $('tpTableWrap').innerHTML = '<table class="tp-table"><thead><tr><th>יום</th><th>בוקר</th><th>צהריים</th><th>ערב</th><th>תקציב</th></tr></thead><tbody>' +
+      rowsHtml +
+      '<tr class="total-row"><th>סה״כ</th><td colspan="3">' + S.days + ' ימים · ' + S.pax + ' מטיילים · ' + S.dests.map(function (k) { return DEST[k] ? esc(DEST[k].t) : ''; }).filter(Boolean).join(', ') + '</td><td class="cost-col">$' + grand.toLocaleString('en-US') + '</td></tr>' +
+      '</tbody></table>';
+  }
+  function applyView() {
+    var table = S.view === 'table';
+    $('tpDayBoard').style.display = table ? 'none' : '';
+    $('tpTableWrap').style.display = table ? 'block' : 'none';
+    document.querySelectorAll('#tpViewToggle button').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-view') === (S.view || 'cards')); });
+  }
+  function onViewClick(b) { S.view = b.getAttribute('data-view'); save(); applyView(); }
+  function renderTotals() {
+    var acts = 0, meals = 0, hotels = 0, logi = 0;
+    S.plan.days.forEach(function (day) {
+      day.rows.forEach(function (r) {
+        var c = (+r.cost || 0) * S.pax;
+        if (r.type === 'meal') meals += c; else if (r.type === 'logi') logi += c; else acts += c;
+      });
+      hotels += hotelPerNight(day.destKey) * S.pax;
+    });
+    var flights = 2200 / USD * S.pax; // ~$595 לאדם טיסה בינלאומית, גס
+    var extra = 150 * S.pax; // שונות
+    var grand = acts + meals + hotels + logi + extra;
+    var withFlights = grand + flights;
+    function line(l, v) { return '<div class="tp-tline"><span>' + l + '</span><b>$' + Math.round(v).toLocaleString('en-US') + '</b></div>'; }
+    $('tpTotals').innerHTML = '<h3><i class="fas fa-calculator"></i> התקציב המשוער (ל-' + S.pax + ' מטיילים, בדולר)</h3>' +
+      '<div class="tp-totals-grid">' +
+      line('🏨 לינה', hotels) + line('🍽️ אוכל', meals) +
+      line('🎟️ אטרקציות', acts) + line('🚐 טיסות פנימיות ומעברים', logi) +
+      line('🛍️ שונות ובזבוזים', extra) + line('✈️ טיסות בינלאומיות (הערכה)', flights) +
+      '</div>' +
+      '<div class="tp-tfinal"><span class="l">סה״כ כל הטיול</span><span class="v">$' + Math.round(withFlights).toLocaleString('en-US') + '</span></div>' +
+      '<div class="tp-tper">זה בערך <b>$' + Math.round(withFlights / S.pax).toLocaleString('en-US') + ' לאדם</b> · כ-' + Math.round(withFlights / S.pax * USD).toLocaleString('he-IL') + ' ₪</div>';
+  }
+  function renderNotForget() {
+    $('tpNotForget').innerHTML = NOTFORGET.map(function (t, i) {
+      var on = !!S.chk['nf' + i];
+      return '<label class="tp-chk' + (on ? ' on' : '') + '" data-chk="nf' + i + '"><span class="box"><i class="fas fa-check"></i></span><span>' + esc(t) + '</span></label>';
+    }).join('');
+  }
+
+  // אירועים בשלב 5 (מנותבים דרך המאזין המרכזי)
+  function onDelRow(el) { var p = el.getAttribute('data-del').split('_'); if (S.plan) { S.plan.days[+p[0]].rows.splice(+p[1], 1); save(); renderPlan(); } }
+  function onAddDay(el) { openAddModal(+el.getAttribute('data-addday')); }
+  function onChkClick(el) { var k = el.getAttribute('data-chk'); S.chk[k] = !S.chk[k]; save(); renderNotForget(); }
+  function onRebuild() { if (window.confirm('לבנות מסלול חדש? שינויים ידניים יימחקו.')) { buildPlan(); renderPlan(); } }
+
+  // מודל הוספת פעילות — מציג extras של היעד של היום + כללי
+  var modal = $('tpModal');
+  function openAddModal(dayIdx) {
+    var day = S.plan.days[dayIdx]; var d = DEST[day.destKey];
+    var opts = (d && d.extras || []).concat([
+      { t: 'ארוחה במסעדה מקומית', note: 'הוסיפו ארוחה לפי הטעם.', cost: 18, tag: 'eve', type: 'meal' },
+      { t: 'זמן חופשי / מנוחה', note: 'יום רגוע בלי לוח זמנים.', cost: 0, tag: 'noon', type: 'act' },
+      { t: 'קניות ושוק מקומי', note: 'מזכרות ואווירה.', cost: 20, tag: 'noon', type: 'act' }
+    ]);
+    $('tpModalBd').innerHTML = opts.map(function (o, i) {
+      return '<button class="tp-opt" data-opt="' + i + '" type="button"><span class="oi"><i class="fas fa-' + (o.type === 'meal' ? 'utensils' : 'location-dot') + '"></i></span>' +
+        '<span class="ot"><b>' + esc(o.t) + '</b>' + (o.note ? '<span>' + esc(o.note) + '</span>' : '') + '</span>' +
+        (o.cost ? '<span class="oc">$' + o.cost + '</span>' : '') + '</button>';
+    }).join('');
+    modal._opts = opts; modal._day = dayIdx;
+    modal.classList.add('open');
+  }
+  function onModalOpt(b) {
+    var o = modal._opts[+b.getAttribute('data-opt')];
+    if (S.plan) { S.plan.days[modal._day].rows.push(Object.assign({}, o)); modal.classList.remove('open'); save(); renderPlan(); }
+  }
+
+  // שיתוף וואטסאפ — מסלול מפורט
+  function tripText() {
+    var whenTxt = whenLabel();
+    var L = ['🇧🇷 המסלול שלי לברזיל', 'תוכנן עם טסים לחו״ל', '', '🗓️ ' + S.days + ' ימים · ' + S.pax + ' מטיילים' + (whenTxt ? ' · ' + whenTxt : ''), ''];
+    S.plan.days.forEach(function (day, di) {
+      L.push('━━━ יום ' + (di + 1) + ' — ' + day.title + ' ━━━');
+      day.rows.forEach(function (r) { L.push((TAG[r.tag] ? TAG[r.tag] + ': ' : '') + r.t); });
+      L.push('');
+    });
+    L.push('💰 תקציב משוער: ראו מתכנן.'); L.push('בנו גם אתם: https://tasim-lehul.com/brazil');
+    return L.join('\n');
+  }
+
+  // ניווט
+  function onBack() { if (S.step > 1) go(S.step - 1); }
+  function onNext() {
+    if (S.step === 6) { window.open('https://wa.me/?text=' + encodeURIComponent(tripText()), '_blank'); return; }
+    if (S.step === 4 && !S.dests.length) {
+      var w = $('tpDestWrap');
+      if (w && !w.querySelector('.tp-dest-warn')) {
+        var warn = document.createElement('p'); warn.className = 'tp-dest-warn';
+        warn.textContent = 'בחרו לפחות יעד אחד כדי להמשיך.'; w.insertBefore(warn, w.firstChild);
+        warn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      return;
+    }
+    if (S.step === 5) { buildPlan(); }   // אחרי בחירת החוויות — בונים מחדש עם הכל
+    if (S.step < 6) go(S.step + 1);
+  }
+  function onStepTab(t) { var n = +t.getAttribute('data-go'); if (n <= S.step || t.classList.contains('done')) { if (n === 6 && !S.plan) buildPlan(); go(n); } }
+
+  // אקורדיון
+  $('tpAcc').innerHTML = REF.map(function (r) { return '<div class="tp-acc"><button class="tp-acc-hd" type="button"><span class="ic"><i class="fas ' + r.ic + '"></i></span><b>' + esc(r.t) + '</b><span class="ar"><i class="fas fa-chevron-down"></i></span></button><div class="tp-acc-bd">' + r.html + '</div></div>'; }).join('');
+  function onAccClick(hd) { hd.parentNode.classList.toggle('open'); }
+
+  // ═══ מאזין קליקים מרכזי אחד (Event Delegation על document) ═══
+  // חסין לשכפול/הזזת אלמנטים ע״י תבנית וורדפרס — כל הכפתורים עוברים דרך כאן.
+  document.addEventListener('click', function (e) {
+    var el;
+    if ((el = e.target.closest('#tpWhen .tp-chip'))) { onSeasonClick(el); return; }
+    if ((el = e.target.closest('#tpStyle .tp-styleopt'))) { onStyleClick(el); return; }
+    if ((el = e.target.closest('#tpDayPlus'))) { S.days = Math.min(28, S.days + 1); S.plan = null; save(); renderBasics(); return; }
+    if ((el = e.target.closest('#tpDayMinus'))) { S.days = Math.max(4, S.days - 1); S.plan = null; save(); renderBasics(); return; }
+    if ((el = e.target.closest('#tpPaxPlus'))) { S.pax = Math.min(12, S.pax + 1); save(); renderBasics(); return; }
+    if ((el = e.target.closest('#tpPaxMinus'))) { S.pax = Math.max(1, S.pax - 1); save(); renderBasics(); return; }
+    if ((el = e.target.closest('#tpExp [data-exp]'))) { onExpClick(el); return; }
+    if ((el = e.target.closest('#tpDestWrap [data-dest]'))) { onDestClick(el); return; }
+    if ((el = e.target.closest('#tpExtrasWrap [data-ex]')) && !e.target.closest('.tp-pick-site')) { onExtraClick(el); return; }
+    if ((el = e.target.closest('#tpViewToggle [data-view]'))) { onViewClick(el); return; }
+    if ((el = e.target.closest('#tpDayBoard [data-del]'))) { onDelRow(el); return; }
+    if ((el = e.target.closest('#tpDayBoard [data-addday]'))) { onAddDay(el); return; }
+    if ((el = e.target.closest('#tpNotForget [data-chk]'))) { onChkClick(el); return; }
+    if ((el = e.target.closest('#tpRebuild'))) { onRebuild(); return; }
+    if ((el = e.target.closest('#tpModalBd [data-opt]'))) { onModalOpt(el); return; }
+    if (e.target.closest('#tpModal [data-mclose]')) { modal.classList.remove('open'); return; }
+    if ((el = e.target.closest('#tpBack'))) { onBack(); return; }
+    if ((el = e.target.closest('#tpNext'))) { onNext(); return; }
+    if ((el = e.target.closest('#tpSteps .tp-step-tab'))) { onStepTab(el); return; }
+    if ((el = e.target.closest('#tpAcc .tp-acc-hd'))) { onAccClick(el); return; }
+  });
+
+  // אתחול
+  renderWhen(); renderBasics();
+  go(S.step || 1);
+  } // boot()
+  if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', boot); }
+  else { boot(); }
+})();
+</script>
+
+</body>
+</html>
