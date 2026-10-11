@@ -161,6 +161,15 @@
   .tp-pick-wrap { position: relative; display: block; }
   .tp-pick-site { position: absolute; top: 9px; inset-inline-start: 9px; z-index: 4; width: 26px; height: 26px; border-radius: 7px; background: rgba(0,0,0,0.5); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 0.72rem; transition: background .15s; }
   .tp-pick-site:hover { background: var(--gold-deep); }
+  /* כפתור הסבר (i) בפינת כל אריח */
+  .tp-pick-info { position: absolute; bottom: 9px; inset-inline-start: 9px; z-index: 5; width: 26px; height: 26px; border-radius: 50%; background: rgba(0,0,0,0.55); color: #fff; border: 1.5px solid rgba(255,255,255,0.5); display: flex; align-items: center; justify-content: center; font-size: 0.72rem; cursor: pointer; transition: all .15s; padding: 0; }
+  .tp-pick-info:hover { background: var(--gold); color: var(--graphite); border-color: var(--gold); }
+  /* חלונית הסבר צפה */
+  .tp-tip { position: fixed; z-index: 4000; max-width: 280px; background: var(--graphite); color: #fff; border-radius: 12px; padding: 14px 16px; box-shadow: 0 14px 40px rgba(0,0,0,.4); display: none; font-size: 0.9rem; line-height: 1.55; }
+  .tp-tip.open { display: block; animation: tpTipIn .18s ease; }
+  @keyframes tpTipIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  .tp-tip b { display: block; color: var(--gold); font-size: 0.98rem; margin-bottom: 5px; }
+  .tp-tip .x { position: absolute; top: 8px; inset-inline-start: 10px; background: none; border: 0; color: #9aa0ab; cursor: pointer; font-size: 0.95rem; }
 
   /* ---------- שלב 5: מסלול מפורט ---------- */
   .tp-plan-summary { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; }
@@ -437,12 +446,12 @@
 
   // ====== חוויות (שלב 3) → תגיות יעדים ======
   var EXPERIENCES = [
-    { id: 'beaches', wiki: 'Copacabana beach Rio', t: 'חופים ושמש', s: 'קופקבנה, חופי הצפון', img: IMG.beach, tags: ['beach'] },
-    { id: 'city', wiki: 'Christ the Redeemer Rio', t: 'עיר וחיי תרבות', s: 'ריו, תצפיות, שכונות', img: IMG.cristo, tags: ['city'] },
-    { id: 'nature', wiki: 'Iguazu Falls', t: 'טבע פראי', s: 'יגוארים, מפלים', img: IMG.pantanal, tags: ['nature'] },
-    { id: 'nightlife', wiki: 'Lapa Rio nightlife samba', t: 'חיי לילה', s: 'סמבה, ברים, מסיבות', img: IMG.nightlife, tags: ['nightlife'] },
-    { id: 'food', wiki: 'Churrasco Brazilian barbecue', t: 'אוכל וטעימות', s: 'שחרסקו, שווקים', img: IMG.food, tags: ['food'] },
-    { id: 'icon', wiki: 'Christ the Redeemer Rio de Janeiro', t: 'האייקונים', s: 'ישו, איגואסו', img: IMG.iguacu, tags: ['icon'] }
+    { id: 'beaches', note: 'חופים טרופיים, קוקטיילים מול הים ושקיעות בלתי נשכחות — מקופקבנה ועד חופי הצפון.', wiki: 'Copacabana beach Rio', t: 'חופים ושמש', s: 'קופקבנה, חופי הצפון', img: IMG.beach, tags: ['beach'] },
+    { id: 'city', note: 'תצפיות מרהיבות, שכונות ציוריות ותרבות עירונית תוססת — הלב הפועם של ברזיל.', wiki: 'Christ the Redeemer Rio', t: 'עיר וחיי תרבות', s: 'ריו, תצפיות, שכונות', img: IMG.cristo, tags: ['city'] },
+    { id: 'nature', note: 'יגוארים בפנטנל, מפלים אדירים ונופים פראיים — חלום לחובבי טבע וצילום.', wiki: 'Iguazu Falls', t: 'טבע פראי', s: 'יגוארים, מפלים', img: IMG.pantanal, tags: ['nature'] },
+    { id: 'nightlife', note: 'סמבה חיה, ברים על החוף ומסיבות עד הבוקר — ברזיל קמה לחיים אחרי שחשוך.', wiki: 'Lapa Rio nightlife samba', t: 'חיי לילה', s: 'סמבה, ברים, מסיבות', img: IMG.nightlife, tags: ['nightlife'] },
+    { id: 'food', note: 'שחרסקו, פיז׳ואדה, אסאי ושווקים צבעוניים — מסע קולינרי של טעמים.', wiki: 'Churrasco Brazilian barbecue', t: 'אוכל וטעימות', s: 'שחרסקו, שווקים', img: IMG.food, tags: ['food'] },
+    { id: 'icon', note: 'ישו הגואל, מפלי איגואסו והר הסוכר — המקומות שאסור לחזור בלעדיהם.', wiki: 'Christ the Redeemer Rio de Janeiro', t: 'האייקונים', s: 'ישו, איגואסו', img: IMG.iguacu, tags: ['icon'] }
   ];
 
   // ====== יעדים (שלב 4) — כל יעד עם תבנית יום מפורטת ======
@@ -451,7 +460,7 @@
   var TAG = { morning: 'בוקר', noon: 'צהריים', eve: 'ערב', move: 'מעבר', stay: 'לינה' };
   var DEST = {
     rio: {
-      t: 'ריו דה ז׳ניירו', s: 'ישו הגואל, חופים וחיי עיר', wiki: 'Christ the Redeemer Rio de Janeiro', img: IMG.cristo, tags: ['city', 'beach', 'nightlife', 'icon'],
+      t: 'ריו דה ז׳ניירו', s: 'ישו הגואל, חופים וחיי עיר', wiki: 'Christ the Redeemer Rio de Janeiro', note: 'עיר של חופים, הרים ואנרגיה — ישו הגואל, קופקבנה והסמבה של לאפה.', img: IMG.cristo, tags: ['city', 'beach', 'nightlife', 'icon'],
       hotel: { backpack: 35, mid: 75, luxe: 180 }, minDays: 3, idealDays: 4, maxDays: 5,
       days: [
         { title: 'ריו — האייקונים', rows: [
@@ -484,7 +493,7 @@
       ]
     },
     iguacu: {
-      t: 'מפלי איגואסו', s: '275 מפלים, שני צדדים', wiki: 'Iguazu Falls Brazil', img: IMG.iguacu, tags: ['nature', 'icon'],
+      t: 'מפלי איגואסו', s: '275 מפלים, שני צדדים', wiki: 'Iguazu Falls Brazil', note: '275 מפלים עוצמתיים על הגבול עם ארגנטינה — אחד מפלאי הטבע של העולם.', img: IMG.iguacu, tags: ['nature', 'icon'],
       hotel: { backpack: 30, mid: 70, luxe: 160 }, minDays: 2, idealDays: 2, maxDays: 3,
       days: [
         { title: 'איגואסו — הצד הברזילאי', rows: [
@@ -506,7 +515,7 @@
       ]
     },
     salvador: {
-      t: 'סלבדור והצפון', s: 'תרבות אפרו-ברזילאית וחופים', wiki: 'Pelourinho Salvador Bahia', img: IMG.salvador, tags: ['city', 'beach', 'food', 'nightlife'],
+      t: 'סלבדור והצפון', s: 'תרבות אפרו-ברזילאית וחופים', wiki: 'Pelourinho Salvador Bahia', note: 'בירת התרבות האפרו-ברזילאית — מוזיקה, צבעים וחופים של באהיה.', img: IMG.salvador, tags: ['city', 'beach', 'food', 'nightlife'],
       hotel: { backpack: 25, mid: 60, luxe: 140 }, minDays: 3, idealDays: 4, maxDays: 6,
       days: [
         { title: 'סלבדור — העיר העתיקה', rows: [
@@ -537,7 +546,7 @@
       ]
     },
     pantanal: {
-      t: 'הפנטנל', s: 'ספארי יגוארים (יולי–אוקטובר)', wiki: 'Pantanal Brazil jaguar', img: IMG.pantanal, tags: ['nature'],
+      t: 'הפנטנל', s: 'ספארי יגוארים (יולי–אוקטובר)', wiki: 'Pantanal Brazil jaguar', note: 'אזור הביצות הגדול בעולם והמקום הכי טוב לראות יגואר בטבע.', img: IMG.pantanal, tags: ['nature'],
       hotel: { backpack: 60, mid: 120, luxe: 280 }, minDays: 2, idealDays: 3, maxDays: 4,
       days: [
         { title: 'פנטנל — כניסה וספארי ראשון', rows: [
@@ -560,7 +569,7 @@
       ]
     },
     jeri: {
-      t: 'ז׳ריקוקוארה', s: 'כפר חופים ודיונות בצפון', wiki: 'Jericoacoara beach dune', img: IMG.jeri, tags: ['beach', 'nightlife'],
+      t: 'ז׳ריקוקוארה', s: 'כפר חופים ודיונות בצפון', wiki: 'Jericoacoara beach dune', note: 'כפר חופים קסום ללא כבישים — דיונות, לגונות וקייט-סרפינג.', img: IMG.jeri, tags: ['beach', 'nightlife'],
       hotel: { backpack: 30, mid: 65, luxe: 150 }, minDays: 3, idealDays: 3, maxDays: 4,
       days: [
         { title: 'ז׳רי — הגעה ושקיעה', rows: [
@@ -583,7 +592,7 @@
       ]
     },
     saopaulo: {
-      t: 'סאו פאולו', s: 'מטרופולין, אמנות, אוכל וחיי לילה', wiki: 'Sao Paulo skyline Paulista', img: IMG.saopaulo, tags: ['city', 'food', 'nightlife'],
+      t: 'סאו פאולו', s: 'מטרופולין, אמנות, אוכל וחיי לילה', wiki: 'Sao Paulo skyline Paulista', note: 'מטרופולין ענק של אמנות, אוכל גורמה וחיי לילה בלתי נגמרים.', img: IMG.saopaulo, tags: ['city', 'food', 'nightlife'],
       hotel: { backpack: 35, mid: 80, luxe: 190 }, minDays: 2, idealDays: 3, maxDays: 4,
       days: [
         { title: 'סאו פאולו — לב העיר', rows: [
@@ -605,7 +614,7 @@
       extras: []
     },
     floripa: {
-      t: 'פלוריאנופוליס', s: 'אי של 42 חופים ומסיבות', wiki: 'Florianopolis beach', img: IMG.floripa, tags: ['beach', 'nightlife', 'nature'],
+      t: 'פלוריאנופוליס', s: 'אי של 42 חופים ומסיבות', wiki: 'Florianopolis beach', note: 'אי של 42 חופים — גלישה, לגונות ומסיבות על החוף.', img: IMG.floripa, tags: ['beach', 'nightlife', 'nature'],
       hotel: { backpack: 30, mid: 70, luxe: 160 }, minDays: 3, idealDays: 3, maxDays: 5,
       days: [
         { title: 'פלוריפה — לגונה וחופים', rows: [
@@ -626,7 +635,7 @@
       extras: []
     },
     buzios: {
-      t: 'בוזיוס', s: 'חצי-אי זוהר של חופים ובוהמה', wiki: 'Buzios Rua das Pedras beach', img: IMG.buzios, tags: ['beach', 'nightlife'],
+      t: 'בוזיוס', s: 'חצי-אי זוהר של חופים ובוהמה', wiki: 'Buzios Rua das Pedras beach', note: 'חצי-אי זוהר של חופים ובוהמה — הטיילת של בריז׳יט בארדו.', img: IMG.buzios, tags: ['beach', 'nightlife'],
       hotel: { backpack: 40, mid: 90, luxe: 210 }, minDays: 2, idealDays: 3, maxDays: 4,
       days: [
         { title: 'בוזיוס — רחוב האבנים', rows: [
@@ -647,7 +656,7 @@
       extras: []
     },
     chapada: {
-      t: 'שאפאדה דיאמנטינה', s: 'מפלים, מערות ובריכות כחולות', wiki: 'Chapada Diamantina landscape', img: IMG.chapada, tags: ['nature'],
+      t: 'שאפאדה דיאמנטינה', s: 'מפלים, מערות ובריכות כחולות', wiki: 'Chapada Diamantina landscape', note: 'פארק לאומי של מפלים, מערות ובריכות כחולות זוהרות.', img: IMG.chapada, tags: ['nature'],
       hotel: { backpack: 25, mid: 55, luxe: 130 }, minDays: 3, idealDays: 4, maxDays: 5,
       days: [
         { title: 'שאפאדה — הגעה ותצפית', rows: [
@@ -839,45 +848,76 @@ var HIGHLIGHTS = [
   function save() { try { localStorage.setItem(STORE, JSON.stringify(S)); } catch (e) {} }
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
 
-  // ====== מנוע תמונות אמיתיות מ-Wikimedia Commons (מבוסס על קרוסלת היעדים של האתר) ======
-  // כל אריח נושא data-wiki עם שם המקום באנגלית; המנוע מושך תמונת נוף אמיתית, עם סינון שמסיר מפות/לוגואים/חתולים.
+  // ====== מנוע תמונות ======
+  // כל אריח נושא data-wiki (שם המקום) ו-data-fb (תמונת גיבוי יציבה ליעד). מנסים Wikimedia חי; אם נכשל/ריק — גיבוי.
   var _imgCache = {};
+  // תמונות גיבוי יציבות (Special:FilePath — תמיד מפנה לקובץ הנוכחי) לכל יעד/קטגוריה
+  function FPATH(n) { return 'https://commons.wikimedia.org/wiki/Special:FilePath/' + encodeURIComponent(n) + '?width=640'; }
+  var FB = {
+    rio: FPATH('Rio de Janeiro - Pão de Açúcar e Botafogo vistos do Corcovado.jpg'),
+    iguacu: FPATH('Cataratas do Iguaçu 2017.jpg'),
+    salvador: FPATH('Pelourinho 2.jpg'),
+    pantanal: FPATH('Panthera onca at Three Brothers River.jpg'),
+    jeri: FPATH('Jericoacoara - panoramio.jpg'),
+    saopaulo: FPATH('SaoPaulo Downtown.jpg'),
+    floripa: FPATH('Florianópolis - SC - panoramio (1).jpg'),
+    buzios: FPATH('Buzios RJ.jpg'),
+    chapada: FPATH('Chapada Diamantina.jpg'),
+    beach: FPATH('Copacabana, Rio de Janeiro, Brazil.jpg'),
+    city: FPATH('Rio de Janeiro - Pão de Açúcar e Botafogo vistos do Corcovado.jpg'),
+    food: FPATH('Picanha no espeto.jpg'),
+    nightlife: FPATH('Arcos da Lapa (Aqueduto da Carioca) - Rio de Janeiro, Brazil.jpg'),
+    nature: FPATH('Cataratas do Iguaçu 2017.jpg'),
+    icon: FPATH('Cristo Redentor - Rio de Janeiro, Brasil.jpg')
+  };
+  function fbFor(key) { return FB[key] || FB.rio; }
   function isValidPlaceImage(title, url) {
     var lower = (title + ' ' + url).toLowerCase();
-    var forbidden = ['map', 'flag', 'logo', 'coat of arms', 'emblem', 'icon', 'locator', 'chart', 'diagram', 'cat', 'kitten', 'dog', 'portrait', 'seal', 'poster', 'banner', 'sign'];
+    var forbidden = ['map', 'flag', 'logo', 'coat of arms', 'emblem', 'icon', 'locator', 'chart', 'diagram', 'cat', 'kitten', 'dog', 'portrait', 'seal', 'poster', 'banner', 'sign', '.svg'];
     for (var i = 0; i < forbidden.length; i++) { if (lower.indexOf(forbidden[i]) !== -1) return false; }
     return true;
   }
   function fetchWikiImage(term, cb) {
     if (!term) { cb(null); return; }
     if (_imgCache[term] !== undefined) { cb(_imgCache[term]); return; }
-    var q = '"' + term + '" (landscape OR cityscape OR skyline OR view OR beach OR waterfall) -map -flag -logo -icon';
+    // שאילתה פשוטה — רק השם, בלי אופרטורים שמצמצמים מדי
     var api = 'https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=' +
-      encodeURIComponent(q) + '&gsrnamespace=6&gsrlimit=8&prop=imageinfo&iiprop=url|size&iiurlwidth=600&format=json&origin=*';
+      encodeURIComponent(term) + '&gsrnamespace=6&gsrlimit=12&prop=imageinfo&iiprop=url|size&iiurlwidth=640&format=json&origin=*';
+    var done = false;
+    var timer = setTimeout(function () { if (!done) { done = true; _imgCache[term] = null; cb(null); } }, 6000);
     fetch(api).then(function (r) { return r.json(); }).then(function (data) {
+      if (done) return; done = true; clearTimeout(timer);
       var url = null;
       if (data.query && data.query.pages) {
         var pages = Object.keys(data.query.pages).map(function (k) { return data.query.pages[k]; });
-        // מעדיף תמונות רוחביות (landscape) תקינות
         pages.sort(function (a, b) { return (a.index || 0) - (b.index || 0); });
-        for (var i = 0; i < pages.length; i++) {
-          var p = pages[i]; if (!p.imageinfo || !p.imageinfo[0]) continue;
-          var info = p.imageinfo[0];
-          if (isValidPlaceImage(p.title, info.url) && info.width >= info.height) { url = info.thumburl || info.url; break; }
+        // קודם מחפשים תמונה רוחבית תקינה; אם אין — מקבלים כל תמונה תקינה
+        for (var pass = 0; pass < 2 && !url; pass++) {
+          for (var i = 0; i < pages.length; i++) {
+            var p = pages[i]; if (!p.imageinfo || !p.imageinfo[0]) continue;
+            var info = p.imageinfo[0];
+            if (!isValidPlaceImage(p.title, info.url)) continue;
+            if (pass === 0 && info.width < info.height) continue;
+            url = info.thumburl || info.url; break;
+          }
         }
       }
       _imgCache[term] = url; cb(url);
-    }).catch(function () { _imgCache[term] = null; cb(null); });
+    }).catch(function () { if (done) return; done = true; clearTimeout(timer); _imgCache[term] = null; cb(null); });
   }
-  // טוען תמונות לכל ה-.bg[data-wiki] שעדיין לא נטענו, עם IntersectionObserver (lazy)
+  // טעינה: Wikimedia חי, ואם אין תוצאה — תמונת הגיבוי של היעד (data-fb). כך אריח אף פעם לא נשאר ריק.
   var _imgObserver = null;
   function loadGalleryImages(root) {
     root = root || document;
     var nodes = root.querySelectorAll('.bg[data-wiki]:not([data-loaded])');
+    function setImg(bg, url) { if (url) { bg.style.backgroundImage = "url('" + url + "')"; bg.classList.add('loaded'); } }
     function loadOne(bg) {
-      var term = bg.getAttribute('data-wiki'); if (!term) { bg.setAttribute('data-loaded', '1'); return; }
       bg.setAttribute('data-loaded', '1');
-      fetchWikiImage(term, function (url) { if (url) { bg.style.backgroundImage = "url('" + url + "')"; bg.classList.add('loaded'); } });
+      var term = bg.getAttribute('data-wiki');
+      var fb = bg.getAttribute('data-fb');
+      // טוענים קודם את הגיבוי מיד (כך תמיד רואים תמונה), ואז מנסים לשדרג לתמונה הספציפית
+      if (fb) setImg(bg, fb);
+      fetchWikiImage(term, function (url) { if (url) setImg(bg, url); });
     }
     if ('IntersectionObserver' in window) {
       if (!_imgObserver) {
@@ -986,7 +1026,7 @@ var HIGHLIGHTS = [
   function renderExp() {
     $('tpExp').innerHTML = EXPERIENCES.map(function (e) {
       var on = S.exp.indexOf(e.id) !== -1;
-      return '<button class="tp-pick' + (on ? ' on' : '') + '" data-exp="' + e.id + '" type="button"><span class="bg" data-wiki="' + esc(e.wiki || '') + '"></span><span class="chk"><i class="fas fa-check"></i></span><span class="cap"><b>' + esc(e.t) + '</b><span>' + esc(e.s) + '</span></span></button>';
+      return '<div class="tp-pick-wrap"><button class="tp-pick' + (on ? ' on' : '') + '" data-exp="' + e.id + '" type="button"><span class="bg" data-wiki="' + esc(e.wiki || '') + '" data-fb="' + fbFor(e.id) + '"></span><span class="chk"><i class="fas fa-check"></i></span><span class="cap"><b>' + esc(e.t) + '</b><span>' + esc(e.s) + '</span></span></button><button class="tp-pick-info" data-info="' + esc(e.note || e.s || '') + '" data-title="' + esc(e.t) + '" type="button" aria-label="הסבר"><i class="fas fa-info"></i></button></div>';
     }).join('');
     $('tpExpCount').textContent = S.exp.length;
     loadGalleryImages($('tpExp'));
@@ -1001,7 +1041,7 @@ var HIGHLIGHTS = [
     if (!keys.length) { $('tpDestWrap').innerHTML = '<div class="tp-empty-places"><i class="fas fa-arrow-right-long"></i>חזרו שלב אחורה וסמנו מה מושך אתכם.</div>'; return; }
     $('tpDestWrap').innerHTML = '<div class="tp-gallery dense">' + keys.map(function (k) {
       var d = DEST[k], on = S.dests.indexOf(k) !== -1;
-      return '<button class="tp-pick' + (on ? ' on' : '') + '" data-dest="' + k + '" type="button"><span class="bg" data-wiki="' + esc(d.wiki || '') + '"></span><span class="chk"><i class="fas fa-check"></i></span><span class="cap"><b>' + esc(d.t) + '</b><span>' + esc(d.s) + '</span></span></button>';
+      return '<div class="tp-pick-wrap"><button class="tp-pick' + (on ? ' on' : '') + '" data-dest="' + k + '" type="button"><span class="bg" data-wiki="' + esc(d.wiki || '') + '" data-fb="' + fbFor(k) + '"></span><span class="chk"><i class="fas fa-check"></i></span><span class="cap"><b>' + esc(d.t) + '</b><span>' + esc(d.s) + '</span></span></button><button class="tp-pick-info" data-info="' + esc(d.note || d.s || '') + '" data-title="' + esc(d.t) + '" type="button" aria-label="הסבר"><i class="fas fa-info"></i></button></div>';
     }).join('') + '</div><p class="tp-gallery-note">בחרתם <b>' + S.dests.length + '</b> יעדים. נחלק ביניהם את ' + S.days + ' הימים.</p>';
     loadGalleryImages($('tpDestWrap'));
   }
@@ -1035,7 +1075,8 @@ var HIGHLIGHTS = [
           var on = S.extras.indexOf(h.id) !== -1;
           var destName = DEST[h.destKey] ? DEST[h.destKey].t : '';
           var siteLink = h.site ? '<a class="tp-pick-site" href="' + h.site + '" target="_blank" rel="noopener" title="לאתר / לבדיקת מופעים"><i class="fas fa-arrow-up-right-from-square"></i></a>' : '';
-          return '<div class="tp-pick-wrap"><button class="tp-pick' + (on ? ' on' : '') + '" data-ex="' + h.id + '" type="button"><span class="bg" data-wiki="' + esc(h.wiki || '') + '"></span><span class="chk"><i class="fas fa-check"></i></span><span class="cap"><b>' + esc(h.t) + '</b><span>' + esc(destName) + (h.cost ? ' · $' + h.cost : '') + '</span></span></button>' + siteLink + '</div>';
+          var infoBtn = '<button class="tp-pick-info" data-info="' + esc(h.note || '') + '" data-title="' + esc(h.t) + '" type="button" aria-label="הסבר"><i class="fas fa-info"></i></button>';
+          return '<div class="tp-pick-wrap"><button class="tp-pick' + (on ? ' on' : '') + '" data-ex="' + h.id + '" type="button"><span class="bg" data-wiki="' + esc(h.wiki || '') + '" data-fb="' + fbFor(h.destKey) + '"></span><span class="chk"><i class="fas fa-check"></i></span><span class="cap"><b>' + esc(h.t) + '</b><span>' + esc(destName) + (h.cost ? ' · $' + h.cost : '') + '</span></span></button>' + infoBtn + siteLink + '</div>';
         }).join('') + '</div></div>';
     });
     wrap.innerHTML = html + '<p class="tp-gallery-note">סימנתם <b>' + S.extras.length + '</b> חוויות. הן ישובצו אוטומטית למסלול ביעד המתאים.</p>';
@@ -1213,8 +1254,28 @@ var HIGHLIGHTS = [
 
   // ═══ מאזין קליקים מרכזי אחד (Event Delegation על document) ═══
   // חסין לשכפול/הזזת אלמנטים ע״י תבנית וורדפרס — כל הכפתורים עוברים דרך כאן.
+  // חלונית הסבר צפה (tooltip) לכפתורי ה-i
+  var tipEl = document.createElement('div'); tipEl.className = 'tp-tip';
+  document.body.appendChild(tipEl);
+  function showTip(btn) {
+    var title = btn.getAttribute('data-title') || '';
+    var info = btn.getAttribute('data-info') || '';
+    tipEl.innerHTML = '<button class="x" aria-label="סגירה">✕</button>' + (title ? '<b>' + esc(title) + '</b>' : '') + esc(info);
+    tipEl.classList.add('open');
+    var r = btn.getBoundingClientRect();
+    // מיקום מעל הכפתור, בתוך גבולות המסך
+    var top = r.top - tipEl.offsetHeight - 10;
+    if (top < 10) top = r.bottom + 10;
+    var left = Math.min(Math.max(10, r.left - tipEl.offsetWidth / 2 + r.width / 2), window.innerWidth - tipEl.offsetWidth - 10);
+    tipEl.style.top = top + 'px'; tipEl.style.left = left + 'px';
+  }
+  function hideTip() { tipEl.classList.remove('open'); }
+  document.addEventListener('click', function (e) { if (!e.target.closest('.tp-pick-info') && !e.target.closest('.tp-tip')) hideTip(); });
+
   document.addEventListener('click', function (e) {
     var el;
+    if ((el = e.target.closest('.tp-tip .x'))) { hideTip(); return; }
+    if ((el = e.target.closest('.tp-pick-info'))) { e.preventDefault(); e.stopPropagation(); showTip(el); return; }
     if ((el = e.target.closest('#tpWhen .tp-chip'))) { onSeasonClick(el); return; }
     if ((el = e.target.closest('#tpStyle .tp-styleopt'))) { onStyleClick(el); return; }
     if ((el = e.target.closest('#tpDayPlus'))) { S.days = Math.min(28, S.days + 1); S.plan = null; save(); renderBasics(); return; }
